@@ -13,6 +13,9 @@ import DashboardLayout from '../components/DashboardLayout';
 import DashboardHome from '../pages/DashboardHome';
 import MyNotes from '../pages/MyNotes';
 import CreateNote from '../pages/CreateNote';
+import FavoritesPage from '../pages/Favorites';
+import TrashPage from '../pages/TrashPage';
+import ProfilePage from '../pages/Profile';
 
 
 const router = createBrowserRouter([
@@ -46,6 +49,18 @@ const router = createBrowserRouter([
       {
         path: "create-note",
         element: <CreateNote />,
+      },
+      {
+        path: "favorites",
+        element: <FavoritesPage />,
+      },
+      {
+        path: "trash",
+        element: <TrashPage />,
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />,
       },
     ],
   },

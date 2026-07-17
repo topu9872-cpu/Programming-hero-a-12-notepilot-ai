@@ -16,10 +16,10 @@ const links = [
   { to: "/dashboard", icon: AiOutlineHome, text: "Dashboard", end: true },
   { to: "/dashboard/notes", icon: AiOutlineFile, text: "My Notes" },
   { to: "/dashboard/create-note", icon: AiOutlineEdit, text: "Create Note" },
-  { to: "/favorites", icon: AiOutlineStar, text: "Favorites" },
-  { to: "/trash", icon: AiOutlineDelete, text: "Trash" },
-  { to: "/profile", icon: AiOutlineUser, text: "Profile" },
-  { to: "/settings", icon: AiOutlineSetting, text: "Settings" }
+  { to: "/dashboard/favorites", icon: AiOutlineStar, text: "Favorites" },
+  { to: "/dashboard/trash", icon: AiOutlineDelete, text: "Trash" },
+  { to: "/dashboard/profile", icon: AiOutlineUser, text: "Profile" },
+  
 ];
 
 const DashboardSidebar = () => {
@@ -49,7 +49,7 @@ const DashboardSidebar = () => {
                   // Pass the end property directly into the NavLink component
                   end={link.end}
                   className={({ isActive }) => `
-                    flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group
+                 hover:scale-102   flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group
                     ${isActive 
                       ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400' 
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-100'
