@@ -1,24 +1,439 @@
-import { Sparkles } from 'lucide-react';
+import React from 'react';
+import { 
+  Sparkles, 
+  Target, 
+  Compass, 
+  Cpu, 
+  Search, 
+  Shield, 
+  Zap, 
+  Smartphone, 
+  Layers, 
+  Heart, 
+  Lock, 
+  Feather, 
+  TrendingUp, 
+  Users, 
+  CheckCircle2, 
+  Activity, 
+  Globe, 
 
-const About = () => {
+  
+  ArrowRight, 
+  BookOpen,
+  Terminal
+} from 'lucide-react';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
+
+// ==========================================
+// INTERFACES & TYPES
+// ==========================================
+interface FeatureItem {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  colorClass: string;
+}
+
+interface ValueItem {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  colorClass: string;
+}
+
+interface StatItem {
+  value: string;
+  label: string;
+  icon: React.ReactNode;
+}
+
+// ==========================================
+// MOCK DATA ARRAYS
+// ==========================================
+const WHY_CHOOSE_FEATURES: FeatureItem[] = [
+  {
+    title: 'AI-Powered Notes',
+    description: 'Instantly summarize complex documents, generate intuitive dynamic tags, and discover underlying semantic links across your entire workspace.',
+    icon: <Cpu className="w-5 h-5" />,
+    colorClass: 'text-purple-500 bg-purple-500/10 border-purple-500/20'
+  },
+  {
+    title: 'Smart Search',
+    description: 'Go beyond literal keywords. Query your second brain using natural, conversational language to retrieve conceptual contexts instantly.',
+    icon: <Search className="w-5 h-5" />,
+    colorClass: 'text-blue-500 bg-blue-500/10 border-blue-500/20'
+  },
+  {
+    title: 'Secure Storage',
+    description: 'Your structural data belongs solely to you. Experience strict architectural compartmentalization and secure document encryption protocols.',
+    icon: <Shield className="w-5 h-5" />,
+    colorClass: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'
+  },
+  {
+    title: 'Fast Performance',
+    description: 'Engineered for rapid workflow execution. Experience near-zero latency text parsing, rendering pipelines, and global operational indexing.',
+    icon: <Zap className="w-5 h-5" />,
+    colorClass: 'text-amber-500 bg-amber-500/10 border-amber-500/20'
+  },
+  {
+    title: 'Cross Device Access',
+    description: 'Synchronize notes fluidly. Access clean, formatted layouts whether you are building layouts on desktop systems or reviewing metrics on mobile layouts.',
+    icon: <Smartphone className="w-5 h-5" />,
+    colorClass: 'text-rose-500 bg-rose-500/10 border-rose-500/20'
+  },
+  {
+    title: 'Modern User Experience',
+    description: 'Immerse yourself in a friendly, high-contrast workspace meticulously optimized for visual balance, fluid navigation, and minimal cognitive friction.',
+    icon: <Layers className="w-5 h-5" />,
+    colorClass: 'text-cyan-500 bg-cyan-500/10 border-cyan-500/20'
+  }
+];
+
+const OUR_VALUES: ValueItem[] = [
+  {
+    title: 'Innovation',
+    description: 'Continuously implementing bleeding-edge language processing models to augment and elevate everyday digital knowledge organization frameworks.',
+    icon: <Sparkles className="w-5 h-5" />,
+    colorClass: 'text-purple-500 bg-purple-500/10'
+  },
+  {
+    title: 'Privacy',
+    description: 'Upholding strict zero-compromise security controls over personal information architecture, ensuring data ownership remains strictly non-compromised.',
+    icon: <Lock className="w-5 h-5" />,
+    colorClass: 'text-emerald-500 bg-emerald-500/10'
+  },
+  {
+    title: 'Simplicity',
+    description: 'Stripping out bloated multi-tier navigation layers to deliver incredibly intuitive, focus-driven workspaces that empower productivity.',
+    icon: <Feather className="w-5 h-5" />,
+    colorClass: 'text-cyan-500 bg-cyan-500/10'
+  },
+  {
+    title: 'Continuous Improvement',
+    description: 'Rapidly shipping incremental structural iterations, responsive optimizations, and feature mechanics driven directly by aggregate user experience.',
+    icon: <TrendingUp className="w-5 h-5" />,
+    colorClass: 'text-rose-500 bg-rose-500/10'
+  }
+];
+
+const STATISTICS: StatItem[] = [
+  { value: '10K+', label: 'Notes Created', icon: <BookOpen className="w-5 h-5 text-purple-500" /> },
+  { value: '2K+', label: 'Active Users', icon: <Users className="w-5 h-5 text-blue-500" /> },
+  { value: '98%', label: 'Satisfaction Rate', icon: <Heart className="w-5 h-5 text-rose-500" /> },
+  { value: '99.9%', label: 'System Uptime', icon: <Activity className="w-5 h-5 text-emerald-500" /> }
+];
+
+export default function About() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 pt-16 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-2xl text-center">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-50 px-4 py-1.5 text-sm font-medium text-indigo-700 dark:border-indigo-800/50 dark:bg-indigo-950/40 dark:text-indigo-300">
-          <Sparkles className="h-4 w-4" />
-          <span>About</span>
-        </div>
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
-          About NotePilot AI
-        </h1>
-        <p className="mt-4 text-lg leading-relaxed text-gray-500 dark:text-gray-400">
-          We are building the future of note-taking. NotePilot AI combines
-          cutting-edge artificial intelligence with elegant design to help you
-          capture and organize ideas effortlessly.
-        </p>
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-50 transition-colors duration-300 antialiased selection:bg-indigo-200">
+      
+      {/* AMBIENT BACKGROUND GLOW EFFECTS */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] pointer-events-none overflow-hidden opacity-50 dark:opacity-20 z-0">
+        <div className="absolute -top-[10%] left-[15%] w-[400px] h-[400px] bg-gradient-to-tr from-indigo-400 to-purple-500 rounded-full blur-[110px]" />
+        <div className="absolute -top-[5%] right-[20%] w-[380px] h-[380px] bg-gradient-to-tr from-cyan-400 to-blue-500 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+        
+        {/* ==========================================
+            1. HERO SECTION
+           ========================================== */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-6">
+          <div className="lg:col-span-7 space-y-6 text-left">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-white dark:bg-zinc-900 border-indigo-100 dark:border-zinc-800 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-500 fill-indigo-500/10" />
+              <span className="text-slate-600 dark:text-zinc-300">Intelligent Second Brain Workspace</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-zinc-50 leading-tight">
+              About <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">NotePilot AI</span>
+            </h1>
+            <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400 max-w-2xl leading-relaxed font-normal">
+              We are reimagining the atomic mechanics of knowledge systems. NotePilot AI acts as a digital companion, bridging structured workflows and advanced context models to synthesize, organize, and track your ideas effortlessly.
+            </p>
+          </div>
+
+          {/* MODERN AI-THEMED ILLUSTRATION AREA (UI ONLY) */}
+          <div className="lg:col-span-5 relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl opacity-10 blur-xl group-hover:opacity-15 transition-opacity duration-300" />
+            <div className="relative border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl space-y-4 overflow-hidden">
+              
+              {/* Fake IDE/Dashboard Interface Mock */}
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                </div>
+                <span className="text-[10px] font-mono text-slate-400">notepilot-agent-v1.ts</span>
+              </div>
+
+              <div className="space-y-2.5 font-mono text-xs">
+                <div className="p-2.5 rounded bg-slate-50 dark:bg-zinc-950 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-100/40 dark:border-indigo-900/30">
+                  ⚡ Analyzing document embeddings...
+                </div>
+                <div className="p-2.5 rounded bg-slate-50 dark:bg-zinc-950 text-slate-600 dark:text-zinc-400 space-y-1">
+                  <p className="text-slate-400">&gt; Clusters identified: 4</p>
+                  <p className="text-emerald-600 dark:text-emerald-400">&gt; Synthesizing vector semantic roadmaps... Done</p>
+                </div>
+              </div>
+
+              {/* Graphical Node Elements */}
+              <div className="grid grid-cols-3 gap-2 pt-2">
+                <div className="p-3 rounded-xl border border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/40 text-center space-y-1">
+                  <div className="text-xs font-black text-slate-800 dark:text-zinc-200">98.2%</div>
+                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Accuracy</div>
+                </div>
+                <div className="p-3 rounded-xl border border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/40 text-center space-y-1">
+                  <div className="text-xs font-black text-indigo-600 dark:text-indigo-400">12 ms</div>
+                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Latency</div>
+                </div>
+                <div className="p-3 rounded-xl border border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/40 text-center space-y-1">
+                  <div className="text-xs font-black text-purple-600 dark:text-purple-400">RAG</div>
+                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Pipeline</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr className="border-slate-200 dark:border-zinc-900" />
+
+        {/* ==========================================
+            2. OUR STORY SECTION
+           ========================================== */}
+        <section className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-sm">
+          <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
+          
+          <div className="max-w-3xl space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
+              <Terminal className="w-5 h-5 text-indigo-500" />
+              <span>Our Story</span>
+            </h2>
+            <div className="space-y-4 text-slate-650 dark:text-zinc-400 text-sm sm:text-base font-normal leading-relaxed">
+              <p>
+                NotePilot AI emerged from a transparent, real-world operational friction point: modern engineers, professionals, and academic researchers are constantly flooded with unstructured technical data logs, documentation modifications, and chaotic thought blocks. Traditional note-taking platforms serve as simple, static storage folders—they fail to assist you in making logical conceptual connections.
+              </p>
+              <p>
+                We built NotePilot AI to transform note-taking into an active, collaborative intellectual partnership. By pairing minimalist, high-contrast user interfaces with highly performant contextual language layers, our platform structures fragmented data logs into cohesive knowledge architecture frameworks automatically.
+              </p>
+              <p>
+                Whether you are deep-diving into intricate MERN workflows, debugging state trees, mapping out technical learning roadmaps, or designing application flows, NotePilot is built explicitly to keep your cognitive load ultra-light and your personal productivity optimized.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ==========================================
+            3. MISSION & VISION SECTION
+           ========================================== */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-6.5 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-sm relative group hover:border-indigo-200 dark:hover:border-zinc-700 transition-all duration-300">
+            <div className="space-y-3">
+              <div className="p-2.5 rounded-xl bg-indigo-50 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 w-fit group-hover:scale-110 transition-transform duration-200">
+                <Target className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold tracking-tight text-slate-950 dark:text-zinc-50">Our Mission</h3>
+              <p className="text-sm text-slate-600 dark:text-zinc-400 font-normal leading-relaxed">
+                To build structural knowledge systems that dynamically analyze, index, and surface conceptual linkages automatically—freeing individuals from organization friction and allowing them to focus entirely on structural innovation.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-6.5 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-sm relative group hover:border-purple-200 dark:hover:border-zinc-700 transition-all duration-300">
+            <div className="space-y-3">
+              <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-zinc-800 text-purple-600 dark:text-purple-400 w-fit group-hover:scale-110 transition-transform duration-200">
+                <Compass className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold tracking-tight text-slate-950 dark:text-zinc-50">Our Vision</h3>
+              <p className="text-sm text-slate-600 dark:text-zinc-400 font-normal leading-relaxed">
+                To become the universal architectural platform for personal second brains, fostering an integrated environment where technical execution, context learning, and note-taking occur in seamless, intuitive harmony.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ==========================================
+            4. WHY CHOOSE NOTEPILOT
+           ========================================== */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2 max-w-xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">Why Choose NotePilot</h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-normal">
+              An ecosystem engineered explicitly around developer velocity, strict data control, and seamless interface performance
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {WHY_CHOOSE_FEATURES.map((feat) => (
+              <div
+                key={feat.title}
+                className="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 shadow-sm hover:-translate-y-1 hover:shadow-md hover:border-slate-300 dark:hover:border-zinc-700 transition-all duration-200 group"
+              >
+                <div className="space-y-3">
+                  <div className={`p-2.5 rounded-xl border w-fit group-hover:scale-105 transition-transform duration-200 ${feat.colorClass.split(' ')[0]} ${feat.colorClass.split(' ')[1]} ${feat.colorClass.split(' ')[2]}`}>
+                    {feat.icon}
+                  </div>
+                  <h3 className="text-sm font-bold tracking-tight text-slate-950 dark:text-zinc-50 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    {feat.title}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-zinc-400 font-normal leading-relaxed">
+                    {feat.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ==========================================
+            5. OUR VALUES SECTION
+           ========================================== */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2 max-w-xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">Core Strategic Values</h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-normal">
+              The fundamental architectural principles steering our product roadmaps every single day
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {OUR_VALUES.map((val) => (
+              <div
+                key={val.title}
+                className="p-5 rounded-xl bg-white dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800/60 shadow-sm text-center space-y-3 hover:border-slate-300 transition-colors"
+              >
+                <div className={`p-3 rounded-xl mx-auto w-fit border border-transparent ${val.colorClass.split(' ')[0]} ${val.colorClass.split(' ')[1]}`}>
+                  {val.icon}
+                </div>
+                <h3 className="text-xs font-bold tracking-tight text-slate-950 dark:text-zinc-50">
+                  {val.title}
+                </h3>
+                <p className="text-[11px] text-slate-500 dark:text-zinc-400 font-normal leading-relaxed">
+                  {val.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ==========================================
+            6. STATISTICS SECTION
+           ========================================== */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {STATISTICS.map((stat) => (
+            <div
+              key={stat.label}
+              className="p-5 bg-white dark:bg-zinc-900 border border-slate-200/90 dark:border-zinc-800 rounded-2xl shadow-sm text-center space-y-1 hover:shadow transition-shadow"
+            >
+              <div className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-zinc-950 flex items-center justify-center mx-auto mb-2 border border-slate-100 dark:border-zinc-800">
+                {stat.icon}
+              </div>
+              <div className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 dark:text-zinc-50">
+                {stat.value}
+              </div>
+              <div className="text-[11px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wide">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </section>
+
+        {/* ==========================================
+            7. MEET THE CREATOR
+           ========================================== */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2 max-w-xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">Meet the Creator</h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-normal">
+              The engineering architect behind the NotePilot AI workspace environment
+            </p>
+          </div>
+
+          <div className="max-w-md mx-auto p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-md text-center space-y-4 hover:border-indigo-200 dark:hover:border-zinc-700 transition-all duration-200">
+            <div className="relative inline-block">
+              <img 
+                src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=180&q=80" 
+                alt="Mehedi Hasan Topu"
+                className="w-20 h-20 rounded-full mx-auto object-cover border-2 border-slate-100 dark:border-zinc-800 shadow"
+              />
+              <span className="absolute bottom-0 right-0 p-1 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900" title="Available for collaboration" />
+            </div>
+
+            <div className="space-y-0.5">
+              <h3 className="text-base font-black tracking-tight text-slate-900 dark:text-zinc-50 flex items-center justify-center gap-1">
+                <span>Mehedi Hasan Topu</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 fill-blue-500 dark:fill-none" />
+              </h3>
+              <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                Full Stack Web Developer
+              </p>
+            </div>
+
+            <p className="text-xs text-slate-600 dark:text-zinc-400 font-normal leading-relaxed max-w-xs mx-auto">
+              Specialized in engineering high-density MERN ecosystems, performant Next.js interfaces, secure databases, and modern UI/UX tools.
+            </p>
+
+            <div className="pt-4 mt-4 border-t border-slate-100 dark:border-zinc-800 flex items-center justify-center gap-3">
+              <a
+                href="https://topudev.vercel.app"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2 rounded-xl bg-slate-50 hover:bg-indigo-50 dark:bg-zinc-950 dark:hover:bg-indigo-950/40 text-slate-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 border border-slate-200 dark:border-zinc-850 shadow-sm transition-all hover:scale-105"
+                title="Portfolio Website"
+              >
+                <Globe className="w-4 h-4" />
+              </a>
+              <a
+                href="https://github.com/topu9872-cpu"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2 rounded-xl bg-slate-50 hover:bg-slate-900 dark:bg-zinc-950 dark:hover:bg-zinc-800 text-slate-600 hover:text-white dark:text-zinc-400 dark:hover:text-white border border-slate-200 dark:border-zinc-850 shadow-sm transition-all hover:scale-105"
+                title="GitHub Profile"
+              >
+                <FaGithub className="w-4 h-4" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/mehedi-hasan-topu"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 dark:bg-zinc-950 dark:hover:bg-blue-950/40 text-slate-600 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 border border-slate-200 dark:border-zinc-850 shadow-sm transition-all hover:scale-105"
+                title="LinkedIn Profile"
+              >
+                <FaLinkedin className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ==========================================
+            8. CTA SECTION
+           ========================================== */}
+        <section className="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-zinc-800 shadow-md bg-white dark:bg-zinc-900/60 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-transparent to-cyan-500/5 pointer-events-none" />
+          
+          <div className="relative z-10 max-w-2xl mx-auto px-5 py-12 text-center space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 dark:text-zinc-50 leading-tight">
+              Start Organizing Smarter Today
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-normal max-w-md mx-auto leading-relaxed">
+              Unlock a beautifully streamlined, high-contrast workspace environment engineered around absolute velocity, AI tag summary automation, and structured learning focus.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold tracking-wide shadow transition-all active:scale-98 group">
+                <span>Get Started</span>
+                <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
+              </button>
+              <button className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-bold tracking-wide border border-slate-250/30 dark:border-zinc-700 transition-all active:scale-98">
+                Explore Notes
+              </button>
+            </div>
+          </div>
+        </section>
+
       </div>
     </div>
   );
-};
-
-export default About;
+}
