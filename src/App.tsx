@@ -1,11 +1,13 @@
 
 import './App.css'
+import AppRoutes from './routes/AppRoutes'
 
 function App() {
 
   return (
     <>
-     notepilot-ai
+      
+     <AppRoutes />;
     </>
   )
 }
