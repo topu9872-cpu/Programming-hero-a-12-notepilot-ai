@@ -9,6 +9,11 @@ import Contact from '../pages/Contact/Contact';
 import Login from '../pages/Login/Login';
 import Signup from '../pages/Signup/Signup';
 import Explore from '../pages/Explore/Explore';
+import DashboardLayout from '../components/DashboardLayout';
+import DashboardHome from '../pages/DashboardHome';
+import MyNotes from '../pages/MyNotes';
+import CreateNote from '../pages/CreateNote';
+
 
 const router = createBrowserRouter([
   {
@@ -23,11 +28,35 @@ const router = createBrowserRouter([
       { path: '/signup', element: <Signup /> },
       { path: '/explore', element: <Explore /> },
     ],
+
+  },
+    // Dashboard routes
+  {
+    path: "/dashboard",
+    element: <DashboardLayout/>,
+    children: [
+      {
+        index: true,
+        element: <DashboardHome />,
+      },
+      {
+        path: "notes",
+        element: <MyNotes />,
+      },
+      {
+        path: "create-note",
+        element: <CreateNote />,
+      },
+    ],
   },
 ]);
 
 const AppRoutes = () => {
-  return <RouterProvider router={router} />;
+  return <>
+
+  
+   <RouterProvider router={router} />
+  </>  
 };
 
 export default AppRoutes;
