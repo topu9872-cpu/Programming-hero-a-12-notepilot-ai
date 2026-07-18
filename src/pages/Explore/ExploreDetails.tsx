@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom'; // 1. Added React Router's hooks manager
+import { redirect, useParams } from 'react-router-dom'; // 1. Added React Router's hooks manager
 import { 
   RiSparkling2Line, RiTimeLine, RiEyeLine, RiCheckboxCircleLine, 
   RiCalendarEventLine, RiHeartLine, RiBookmarkLine, RiUserLine, 
   RiFileList3Line, RiArrowLeftSLine, RiArrowRightSLine
 } from 'react-icons/ri';
-import { getAllNotesDetails, Notesfavorited } from '../../api/ServerRoute';
+import { getAllNotesDetails, Notesfavorited, removeFavorite,  } from '../../api/ServerRoute';
 import { authClient } from '../../lib/auth-client';
+import { toast } from 'sonner';
 
 export interface Note {
   _id: string;
@@ -43,35 +44,64 @@ export default function NoteDetails() {
   const [note, setNote] = useState<Note | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
  
-  useEffect(() => {
-  if (!id) return;
-
-  getAllNotesDetails(id)
-    .then((data) => {
+ useEffect(() => {
+  const fetchNote = async () => {
+    try {
+      const data = await getAllNotesDetails(id!);
+    
       setNote(data);
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error(error);
-    });
+    
+      
+    }
+  };
 
+  fetchNote();
 }, [id]);
+
 
 const {data:session}=authClient.useSession()
 const user=session?.user
 
 const handleFavorite = async () => {
-  const next = !isFavorited;
+  if (!note) {
+    toast.error("Note not found");
+    return;
+  }
+
+  // 1. Defensively check for authenticated user status up front
+  if (!user?.id) {
+    redirect('/login')
+    toast.error("Please login to save favorite notes");
+    return;
+  }
 
   try {
-  const data=  await Notesfavorited({
-      isFavorited: next,
-      note,
-      user,
-    });
-console.log(data)
-    setIsFavorited(next);
-  } catch (error) {
-    console.error(error);
+    if (isFavorited) {
+      // Perform deletion request
+      await removeFavorite(note._id, user.id);
+      setIsFavorited(false);
+      toast.success("Removed from favorites");
+    } else {
+      // Perform additions request
+      await Notesfavorited({
+        isFavorited: true,
+        note,
+        user,
+      });
+      setIsFavorited(true);
+      toast.success("Added to favorites");
+    }
+  } catch (error: any) {
+    // 2. Handle a possible database mismatch gracefully 
+    if (error?.response?.status === 409 || error?.message?.includes('Already favorited')) {
+      toast.error("This note is already in your favorites");
+      setIsFavorited(true); // Force UI back in sync with server state
+    } else {
+      toast.error("Something went wrong");
+    }
+    console.error("Favorite action failed:", error);
   }
 };
 

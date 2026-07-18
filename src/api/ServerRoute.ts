@@ -51,17 +51,34 @@ export const Notesfavorited = async (data: {
   note: Note | null;
   user: any;
 }) => {
-  console.log(data)
-  const res=await fetch(`${API}/favorited`, {
+  const res = await fetch(`${API}/favorited`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });
-   if (!res.ok) {
-    throw new Error("Failed to fetch notes");
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Something went wrong");
   }
+
+  return result;
+};
+
+ export const removeFavorite = async (noteId: string, userId: string) => {
+  const res = await fetch(`${API}/favorited`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      noteId,
+      userId,
+    }),
+  });
 
   return res.json();
 };

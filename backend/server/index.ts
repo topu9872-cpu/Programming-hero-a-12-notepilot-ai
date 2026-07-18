@@ -1,7 +1,7 @@
 import express from "express";
 
 import cors from "cors";
-import { MongoClient, Filter, Sort } from "mongodb";
+import { MongoClient, Filter, Sort, ObjectId } from "mongodb";
 import { toNodeHandler } from "better-auth/node";
 
 import { getAuth } from "../auth";
@@ -53,7 +53,7 @@ async function startServer() {
   try {
     // ১. ডাটাবেজের সাথে কানেক্ট করুন
     await client.connect();
-    console.log("⚡ Connected successfully to MongoDB");
+   
 
     app.get("/all-notes", async (req, res) => {
       const query = req.query as NotesQuery;
@@ -123,12 +123,39 @@ async function startServer() {
     });
 
 
-app.post('/favorited', async(req, res)=>{
-  const body=req.body
-  const result=await FavoritedCollection.insertOne(body)
-  res.json(result)
-})
+app.post("/favorited", async (req, res) => {
+ 
 
+  const body = req.body;
+
+  const exists = await FavoritedCollection.findOne({
+    "note._id": body.note._id,
+    "user.id": body.user.id,
+  });
+
+ 
+
+  if (exists) {
+    return res.status(409).json({
+      message: "Already favorited",
+    });
+  }
+
+  const result = await FavoritedCollection.insertOne(body);
+
+  res.json(result);
+});
+
+app.delete("/favorited", async (req, res) => {
+  const { noteId, userId } = req.body;
+
+  const result = await FavoritedCollection.deleteOne({
+    "note._id": noteId,
+    "user.id": userId,
+  });
+
+  res.json(result);
+});
 
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");
