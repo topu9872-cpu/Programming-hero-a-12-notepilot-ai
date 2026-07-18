@@ -7,7 +7,7 @@ import {
   AiOutlineStar, 
   AiOutlineDelete, 
   AiOutlineUser, 
-  AiOutlineSetting 
+  
 } from 'react-icons/ai';
 import { Sparkles } from 'lucide-react';
 
@@ -30,8 +30,8 @@ const DashboardSidebar = () => {
     <aside className="w-64 h-screen sticky top-0 bg-slate-50 dark:bg-slate-900 border-r border-slate-200/60 dark:border-slate-800/60 p-5 flex flex-col justify-between select-none transition-colors duration-200">
       <div>
         {/* Logo / Brand */}
-        <Link to="/" className="flex items-center gap-2 group select-none mb-6 block">
-          <div className="h-8 w-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm shadow-indigo-500/20 transition-transform group-hover:scale-105">
+        <Link to="/" className="flex items-center gap-2 group select-none mb-6 ">
+          <div className="h-8 w-8 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-sm shadow-indigo-500/20 transition-transform group-hover:scale-105">
             <Sparkles className="h-4 w-4 fill-indigo-200/20" />
           </div>
           <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">

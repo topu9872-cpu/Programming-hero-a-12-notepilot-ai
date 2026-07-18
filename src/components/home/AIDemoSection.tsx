@@ -80,7 +80,7 @@ const AIDemoSection = () => {
             <div className="mt-10">
               <Link
                 to="/signup"
-                className="group inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200/50 transition-all duration-300 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-300/50 active:scale-[0.97] dark:shadow-indigo-900/30 dark:hover:shadow-indigo-800/40"
+                className="group inline-flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200/50 transition-all duration-300 hover:-translate-y-0.5 hover:bg-purple-700 hover:shadow-xl hover:shadow-indigo-300/50 active:scale-[0.97] dark:shadow-indigo-900/30 dark:hover:shadow-indigo-800/40"
               >
                 Try AI Features Free
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />

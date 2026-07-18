@@ -47,7 +47,7 @@ const HeroSection = ({
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:gap-4">
               <Link
                 to="/signup"
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-300/50 active:scale-[0.97] dark:shadow-indigo-900/30 dark:hover:shadow-indigo-800/40"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-purple-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-300/50 active:scale-[0.97] dark:shadow-indigo-900/30 dark:hover:shadow-indigo-800/40"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 <span className="relative flex items-center gap-2">

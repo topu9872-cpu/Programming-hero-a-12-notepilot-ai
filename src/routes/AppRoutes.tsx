@@ -43,23 +43,23 @@ const router = createBrowserRouter([
         element: <DashboardHome />,
       },
       {
-        path: "notes",
+        path: "/dashboard/notes",
         element: <MyNotes />,
       },
       {
-        path: "create-note",
+        path: "/dashboard/create-note",
         element: <CreateNote />,
       },
       {
-        path: "favorites",
+        path: "/dashboard/favorites",
         element: <FavoritesPage />,
       },
       {
-        path: "trash",
+        path: "/dashboard/trash",
         element: <TrashPage />,
       },
       {
-        path: "profile",
+        path: "/dashboard/profile",
         element: <ProfilePage />,
       },
     ],
