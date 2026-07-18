@@ -16,6 +16,7 @@ import CreateNote from '../pages/CreateNote';
 import FavoritesPage from '../pages/Favorites';
 import TrashPage from '../pages/TrashPage';
 import ProfilePage from '../pages/Profile';
+import NoteDetails from '../pages/Explore/ExploreDetails';
 
 
 const router = createBrowserRouter([
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <Signup /> },
       { path: '/explore', element: <Explore /> },
+      { path: '/explore/:id', element: <NoteDetails /> },
     ],
 
   },

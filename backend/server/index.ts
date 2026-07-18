@@ -1,7 +1,7 @@
 import express from 'express';
 
 import cors from 'cors';
-import { MongoClient } from 'mongodb'; 
+import { MongoClient, ObjectId } from 'mongodb'; 
 import { toNodeHandler } from 'better-auth/node';
 
 import { getAuth } from '../auth';
@@ -27,13 +27,51 @@ app.use("/api/auth", async (req, res) => {
 // 🔌 মঙ্গোডিবি কানেকশন এবং সার্ভার স্টার্ট লজিক
 const client = new MongoClient(process.env.MONGODB_URI as string);
 
+interface Note {
+  _id: string;
+  title: string;
+  description: string;
+  content: string;
+  // other fields...
+}
+const db = client.db("NotePilot");
+
+const AllNotesCollection = db.collection<Note>("All_Notes");
 async function startServer() {
   try {
     // ১. ডাটাবেজের সাথে কানেক্ট করুন
     await client.connect();
     console.log("⚡ Connected successfully to MongoDB");
 
-    // ২. ডাটাবেজ কানেক্ট হওয়ার পর এক্সপ্রেস সার্ভার লিসেন করা শুরু করবে
+app.get("/all-notes", async (_req, res) => {
+  const result = await AllNotesCollection.find().toArray();
+
+
+  res.json(result);
+});
+
+app.get("/all-notes/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log("Received ID:", id);
+
+    const result = await AllNotesCollection.findOne({
+      _id: id,
+    });
+
+    console.log("Found data:", result);
+
+    res.json(result);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+});
+
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");
     });
