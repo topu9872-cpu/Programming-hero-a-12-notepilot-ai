@@ -37,8 +37,24 @@ export const getAllNotes = async ({
   return res.json();
 };
 
+
+
+
+
+
+
+
+
 export const getAllNotesDetails = async (id: string) => {
-  const res = await fetch(`${API}/all-notes/${id}`);
+  // Adding cache: 'no-store' instructs the browser to bypass its cache 
+  // and fetch fresh data from the server every single time.
+  const res = await fetch(`${API}/all-notes/${id}`, {
+    cache: 'no-store',
+    headers: {
+      'Pragma': 'no-cache',
+      'Cache-Control': 'no-cache'
+    }
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch notes");
@@ -46,6 +62,8 @@ export const getAllNotesDetails = async (id: string) => {
 
   return res.json();
 };
+
+
 export const Notesfavorited = async (data: {
   isFavorited: boolean;
   note: Note | null;
@@ -68,6 +86,8 @@ export const Notesfavorited = async (data: {
   return result;
 };
 
+
+
  export const removeFavorite = async (noteId: string, userId: string) => {
   const res = await fetch(`${API}/favorited`, {
     method: "DELETE",
@@ -82,3 +102,21 @@ export const Notesfavorited = async (data: {
 
   return res.json();
 };
+
+export const notePost=async(body:Note)=>{
+   const res = await fetch(`${API}/all-notes`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Something went wrong");
+  }
+
+  return result;
+}

@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { redirect, useParams } from 'react-router-dom'; // 1. Added React Router's hooks manager
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   RiSparkling2Line, RiTimeLine, RiEyeLine, RiCheckboxCircleLine, 
   RiCalendarEventLine, RiHeartLine, RiBookmarkLine, RiUserLine, 
-  RiFileList3Line, RiArrowLeftSLine, RiArrowRightSLine
+  RiFileList3Line
 } from 'react-icons/ri';
-import { getAllNotesDetails, Notesfavorited, removeFavorite,  } from '../../api/ServerRoute';
+import { getAllNotesDetails, Notesfavorited, removeFavorite } from '../../api/ServerRoute';
 import { authClient } from '../../lib/auth-client';
 import { toast } from 'sonner';
 
 export interface Note {
-  _id: string;
+  _id: string; // Sanitized to a flat string from $oid
   title: string;
   description: string;
   content?: string;
@@ -20,7 +20,7 @@ export interface Note {
   coverImage?: string;
   author: {
     name: string;
-    avatar: string;
+    avatar: string; // Mapped from author.image
     bio?: string;
     isVerified?: boolean;
   };
@@ -38,72 +38,99 @@ export interface Note {
 }
 
 export default function NoteDetails() {
-  // Extract id directly from the URL route context safely via useParams hook
   const { id } = useParams<{ id: string }>(); 
- 
+  const navigate = useNavigate(); // Fixed client-side routing redirect
+  
   const [note, setNote] = useState<Note | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
- 
- useEffect(() => {
+  
+useEffect(() => {
+  if (!id) return;
+
   const fetchNote = async () => {
     try {
-      const data = await getAllNotesDetails(id!);
-    
-      setNote(data);
+      const rawData = await getAllNotesDetails(id);
+      console.log(rawData)
+      if (!rawData) {
+        toast.error("Document data record could not be found.");
+        return;
+      }
+
+      // 🛡️ Bulletproof Normalization Layer
+      const normalizedNote: Note = {
+        ...rawData,
+        // 1. Safeguard ID format conversions
+        _id: rawData._id?.$oid || rawData._id || id,
+        
+        // 2. Safeguard against complete absence of author metadata
+        author: {
+          name: rawData.author?.name || 'Anonymous User',
+          avatar: rawData.author?.image || rawData.author?.avatar || '', 
+          bio: rawData.author?.bio || 'Workspace member',
+          isVerified: !!rawData.author?.isVerified
+        },
+        
+        // 3. Guarantee tags fallback to an empty collection to block processing failures
+        tags: Array.isArray(rawData.tags) ? rawData.tags : [],
+        
+        // 4. Guarantee foundational metrics fall back to zero safely
+        views: typeof rawData.views === 'number' ? rawData.views : 0,
+        readTime: rawData.readTime || '1 min',
+        coverGradient: rawData.coverGradient || 'from-indigo-500 to-purple-600'
+      };
+
+      setNote(normalizedNote);
     } catch (error) {
-      console.error(error);
-    
+      console.error("Critical content load exception:", error);
+      toast.error("An error occurred while building document contents.");
       
+      // Break the indefinite loader cycle by setting a structural empty state
+      setNote(null);
     }
   };
 
   fetchNote();
 }, [id]);
 
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
 
-const {data:session}=authClient.useSession()
-const user=session?.user
-
-const handleFavorite = async () => {
-  if (!note) {
-    toast.error("Note not found");
-    return;
-  }
-
-  // 1. Defensively check for authenticated user status up front
-  if (!user?.id) {
-    redirect('/login')
-    toast.error("Please login to save favorite notes");
-    return;
-  }
-
-  try {
-    if (isFavorited) {
-      // Perform deletion request
-      await removeFavorite(note._id, user.id);
-      setIsFavorited(false);
-      toast.success("Removed from favorites");
-    } else {
-      // Perform additions request
-      await Notesfavorited({
-        isFavorited: true,
-        note,
-        user,
-      });
-      setIsFavorited(true);
-      toast.success("Added to favorites");
+  const handleFavorite = async () => {
+    if (!note) {
+      toast.error("Note not found");
+      return;
     }
-  } catch (error: any) {
-    // 2. Handle a possible database mismatch gracefully 
-    if (error?.response?.status === 409 || error?.message?.includes('Already favorited')) {
-      toast.error("This note is already in your favorites");
-      setIsFavorited(true); // Force UI back in sync with server state
-    } else {
-      toast.error("Something went wrong");
+
+    if (!user) {
+      toast.error("Please login to save favorite notes");
+      navigate('/login'); // Standard React Router programmatic navigation
+      return;
     }
-    console.error("Favorite action failed:", error);
-  }
-};
+
+    try {
+      if (isFavorited) {
+        await removeFavorite(note._id, user.id);
+        setIsFavorited(false);
+        toast.success("Removed from favorites");
+      } else {
+        await Notesfavorited({
+          isFavorited: true,
+          note,
+          user,
+        });
+        setIsFavorited(true);
+        toast.success("Added to favorites");
+      }
+    } catch (error: any) {
+      if (error?.response?.status === 409 || error?.message?.includes('Already favorited')) {
+        toast.error("This note is already in your favorites");
+        setIsFavorited(true); 
+      } else {
+        toast.error("Something went wrong");
+      }
+      console.error("Favorite action failed:", error);
+    }
+  };
 
   if (!note) {
     return (
@@ -169,22 +196,22 @@ const handleFavorite = async () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{note.author?.name || 'Anonymous User'}</h4>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">{note.author?.bio || 'Workspace member'}</p>
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{note.author.name}</h4>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">{note.author.bio}</p>
                 </div>
               </div>
               
               <div className="flex justify-end">
                 <button 
                   type="button" 
-                 onClick={handleFavorite}
+                  onClick={handleFavorite}
                   className={`w-full sm:w-auto flex items-center justify-center gap-2.5 p-2.5 px-6 text-xs font-medium rounded-xl border transition-all ${
                     isFavorited 
                       ? 'border-red-200 bg-red-50/50 dark:bg-red-950/20 text-red-600 dark:text-red-400 shadow-2xs' 
                       : 'border-slate-150 dark:border-slate-850 text-slate-700 dark:text-slate-300 bg-slate-50/50 dark:bg-slate-950/40 '
                   }`}
                 >
-                  {isFavorited ? <RiHeartLine className="w-4 h-4 text-red-500" /> : <RiHeartLine className="w-4 h-4 text-slate-400" />}
+                  <RiHeartLine className={`w-4 h-4 ${isFavorited ? 'text-red-500 fill-red-500' : 'text-slate-400'}`} />
                   <span>{isFavorited ? 'Favorited' : 'Add to Favorites'}</span>
                 </button>
               </div>
@@ -276,8 +303,6 @@ const handleFavorite = async () => {
               </div>
             </article>
           </div>
-
-        
         </main>
       </div>
     </div>

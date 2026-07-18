@@ -105,22 +105,28 @@ async function startServer() {
       });
     });
 
-    app.get("/all-notes/:id", async (req, res) => {
-      try {
-        const { id } = req.params;
-        const result = await AllNotesCollection.findOne({
-          _id: id,
-        });
+app.get("/all-notes/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Searching database for ID:", id); // Verify the ID received
 
-
-        res.json(result);
-      } catch (error) {
-        console.log(error);
-        res.status(500).json({
-          message: "Server error",
-        });
-      }
+    const result = await AllNotesCollection.findOne({
+      _id: new ObjectId(id),
     });
+
+    console.log("Database result found:", result); // 🔍 CHECK YOUR SERVER TERMINAL HERE
+
+    if (!result) {
+      return res.status(404).send({ message: "Note not found" });
+    }
+
+    // Explicitly send as JSON to ensure the content-type is correct
+    res.status(200).json(result); 
+  } catch (error) {
+    console.error("Backend Error:", error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+});
 
 
 app.post("/favorited", async (req, res) => {
@@ -157,14 +163,21 @@ app.delete("/favorited", async (req, res) => {
   res.json(result);
 });
 
+app.post('/all-notes', async(req, res)=>{
+  const body=req.body
+  console.log(body)
+  const result=await AllNotesCollection.insertOne(body)
+  res.json(result)
+})
+
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");
     });
   } catch (error) {
     console.error("❌ Failed to connect to MongoDB:", error);
-    process.exit(1); // কানেকশন ফেইল করলে অ্যাপ বন্ধ করে দেবে
+    process.exit(1);
   }
 }
 
-// ফাংশনটি কল করুন
+
 startServer();
