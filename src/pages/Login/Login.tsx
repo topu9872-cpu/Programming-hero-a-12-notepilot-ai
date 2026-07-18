@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import {
@@ -11,6 +11,7 @@ import {
   Shield,
   ArrowRight,
 } from 'lucide-react';
+import { authClient } from '../../lib/auth-client';
 
 interface LoginFormData {
   email: string;
@@ -24,6 +25,8 @@ const highlights = [
   { icon: ArrowRight, text: 'Smart organization & insights' },
 ];
 
+
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,17 +39,47 @@ const Login = () => {
     defaultValues: { rememberMe: false },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log('Login data:', data);
-    toast.success('Welcome back! Redirecting to dashboard...');
-    setIsSubmitting(false);
-  };
-
-  const handleGoogleLogin = () => {
-    toast.info('Google authentication coming soon!');
-  };
+  
+    const navigate = useNavigate();
+   const onSubmit = async (formData:LoginFormData) => {
+      setIsSubmitting(true);
+      try {
+        const { email, password} = formData;
+  
+        const { data: responseData, error } = await authClient.signIn.email({
+          email,
+          password,
+          callbackURL: "/",
+        });
+  
+        if (error) {
+          toast.error(error.message || "Something went wrong during signup.");
+          return;
+        }
+  
+        toast.success("Account created! Redirecting to dashboard...");
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } catch (err) {
+        console.error("Signup error:", err);
+        toast.error("An unexpected error occurred.");
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+  
+    const handleGoogleLogin = async () => {
+      try {
+        await authClient.signIn.social({
+          provider: "google",
+           callbackURL: import.meta.env.VITE_APP_URL,
+        });
+      } catch (err) {
+        console.error("Google sign-in error:", err);
+        toast.error("Failed to authenticate with Google.");
+      }
+    };
 
   return (
     // Added bg-white dark:bg-gray-950 to the main wrapper
