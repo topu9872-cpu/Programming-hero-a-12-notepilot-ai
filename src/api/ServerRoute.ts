@@ -1,3 +1,5 @@
+import { Note } from "../pages/Explore/ExploreDetails";
+
 const API = import.meta.env.VITE_API_URL;
 
 export interface NotesRequestOptions {
@@ -39,6 +41,25 @@ export const getAllNotesDetails = async (id: string) => {
   const res = await fetch(`${API}/all-notes/${id}`);
 
   if (!res.ok) {
+    throw new Error("Failed to fetch notes");
+  }
+
+  return res.json();
+};
+export const Notesfavorited = async (data: {
+  isFavorited: boolean;
+  note: Note | null;
+  user: any;
+}) => {
+  console.log(data)
+  const res=await fetch(`${API}/favorited`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+   if (!res.ok) {
     throw new Error("Failed to fetch notes");
   }
 

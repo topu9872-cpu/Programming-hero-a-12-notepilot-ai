@@ -33,5 +33,5 @@ export async function getDb(): Promise<Db> {
   const mongoClient = await clientPromise;
   // It will automatically use the default database from your MONGODB_URI string
   // (e.g. mongodb+srv://.../NotePilot) or you can pass a string name: mongoClient.db("NotePilot")
-  return mongoClient.db();
+  return mongoClient.db('NotePilot');
 }

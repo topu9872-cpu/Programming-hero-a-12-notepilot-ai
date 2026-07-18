@@ -76,12 +76,12 @@ const getIconForCategory = (category: string) => {
 };
 
 export default function Explore() {
-  type SortOption = "newest" | "oldest" | "mostViewed" | "featured";
+  type SortOption ='all'| "newest" | "oldest" | "mostViewed" | "featured";
 
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [sortOption, setSortOption] = useState<SortOption>("newest");
+  const [sortOption, setSortOption] = useState<SortOption>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [followedCreators, setFollowedCreators] = useState<string[]>([]);
@@ -90,6 +90,7 @@ export default function Explore() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const sortOptions: { value: SortOption; label: string }[] = [
+    { value: "all", label: "All" },
     { value: "newest", label: "Newest" },
     { value: "oldest", label: "Oldest" },
     { value: "mostViewed", label: "Most Viewed" },
@@ -130,7 +131,7 @@ export default function Explore() {
 
   useEffect(() => {
     const pageParam = Number(searchParams.get("page") || "1");
-    const sortParam = (searchParams.get("sort") || "newest") as SortOption;
+    const sortParam = (searchParams.get("sort") || "all") as SortOption;
     const searchParam = searchParams.get("search") || "";
 
     setCurrentPage(Number.isNaN(pageParam) ? 1 : Math.max(1, pageParam));

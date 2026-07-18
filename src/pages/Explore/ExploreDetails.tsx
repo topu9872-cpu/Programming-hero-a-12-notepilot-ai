@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom'; // 1. Added React Router's hooks manager
 import { 
   RiSparkling2Line, RiTimeLine, RiEyeLine, RiCheckboxCircleLine, 
   RiCalendarEventLine, RiHeartLine, RiBookmarkLine, RiUserLine, 
   RiFileList3Line, RiArrowLeftSLine, RiArrowRightSLine
 } from 'react-icons/ri';
-import { getAllNotesDetails } from '../../api/ServerRoute';
+import { getAllNotesDetails, Notesfavorited } from '../../api/ServerRoute';
+import { authClient } from '../../lib/auth-client';
 
-interface Note {
+export interface Note {
   _id: string;
   title: string;
   description: string;
@@ -38,17 +39,15 @@ interface Note {
 export default function NoteDetails() {
   // Extract id directly from the URL route context safely via useParams hook
   const { id } = useParams<{ id: string }>(); 
-  console.log(id)
-  const [notes, setNotes] = useState<Note[]>([]);
+ 
   const [note, setNote] = useState<Note | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
-  
+ 
   useEffect(() => {
   if (!id) return;
 
   getAllNotesDetails(id)
     .then((data) => {
-      console.log(data);
       setNote(data);
     })
     .catch((error) => {
@@ -57,20 +56,24 @@ export default function NoteDetails() {
 
 }, [id]);
 
+const {data:session}=authClient.useSession()
+const user=session?.user
 
+const handleFavorite = async () => {
+  const next = !isFavorited;
 
-  const handleNavigation = (direction: 'prev' | 'next') => {
-    if (notes.length <= 1 || !note) return;
-    const currentIndex = notes.findIndex((n) => n._id === note._id);
-    
-    let nextIndex = currentIndex;
-    if (direction === 'prev') {
-      nextIndex = currentIndex > 0 ? currentIndex - 1 : notes.length - 1;
-    } else {
-      nextIndex = currentIndex < notes.length - 1 ? currentIndex + 1 : 0;
-    }
-    setNote(notes[nextIndex]);
-  };
+  try {
+  const data=  await Notesfavorited({
+      isFavorited: next,
+      note,
+      user,
+    });
+console.log(data)
+    setIsFavorited(next);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   if (!note) {
     return (
@@ -144,7 +147,7 @@ export default function NoteDetails() {
               <div className="flex justify-end">
                 <button 
                   type="button" 
-                  onClick={() => setIsFavorited(!isFavorited)}
+                 onClick={handleFavorite}
                   className={`w-full sm:w-auto flex items-center justify-center gap-2.5 p-2.5 px-6 text-xs font-medium rounded-xl border transition-all ${
                     isFavorited 
                       ? 'border-red-200 bg-red-50/50 dark:bg-red-950/20 text-red-600 dark:text-red-400 shadow-2xs' 
@@ -244,23 +247,7 @@ export default function NoteDetails() {
             </article>
           </div>
 
-          {/* NAVIGATION ROW ROUTER */}
-          <nav className="flex items-center justify-between gap-4 pt-4">
-            <button 
-              onClick={() => handleNavigation('prev')}
-              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850 transition-all text-slate-600 dark:text-slate-400 shadow-2xs"
-            >
-              <RiArrowLeftSLine className="w-4 h-4" />
-              <span>Previous Note</span>
-            </button>
-            <button 
-              onClick={() => handleNavigation('next')}
-              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850 transition-all text-slate-600 dark:text-slate-400 shadow-2xs"
-            >
-              <span>Next Note</span>
-              <RiArrowRightSLine className="w-4 h-4" />
-            </button>
-          </nav>
+        
         </main>
       </div>
     </div>

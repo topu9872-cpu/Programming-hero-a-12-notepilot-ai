@@ -17,7 +17,6 @@ app.use(
 );
 app.use(express.json());
 
-// 🟢 The Cleanest Way: Just use the base path with no wildcard symbols
 app.use("/api/auth", async (req, res) => {
   const auth = await getAuth();
   return toNodeHandler(auth)(req, res);
@@ -49,6 +48,7 @@ type NotesQuery = {
 const db = client.db("NotePilot");
 
 const AllNotesCollection = db.collection<Note>("All_Notes");
+const FavoritedCollection = db.collection<Note>("Favorited");
 async function startServer() {
   try {
     // ১. ডাটাবেজের সাথে কানেক্ট করুন
@@ -108,14 +108,10 @@ async function startServer() {
     app.get("/all-notes/:id", async (req, res) => {
       try {
         const { id } = req.params;
-
-        console.log("Received ID:", id);
-
         const result = await AllNotesCollection.findOne({
           _id: id,
         });
 
-        console.log("Found data:", result);
 
         res.json(result);
       } catch (error) {
@@ -125,6 +121,14 @@ async function startServer() {
         });
       }
     });
+
+
+app.post('/favorited', async(req, res)=>{
+  const body=req.body
+  const result=await FavoritedCollection.insertOne(body)
+  res.json(result)
+})
+
 
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");
