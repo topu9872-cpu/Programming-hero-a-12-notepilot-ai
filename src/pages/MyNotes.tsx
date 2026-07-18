@@ -83,7 +83,7 @@ const MyNotes = () => {
           <p className="text-slate-500 dark:text-slate-400 mt-1">Your personal notes, powered by NotePilot AI.</p>
         </div>
         <button 
-          onClick={() => navigate('/create-note')}
+          onClick={() => navigate('/dashboard/create-note')}
           className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:opacity-95 text-white font-medium py-2.5 px-4 rounded-xl shadow transition w-full sm:w-auto justify-center"
         >
           <Plus size={18} />

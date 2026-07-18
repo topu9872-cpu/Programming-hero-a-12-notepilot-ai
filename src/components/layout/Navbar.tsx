@@ -8,19 +8,26 @@ interface NavLinkItem {
   href: string;
 }
 
-const navLinks: NavLinkItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Explore", href: "/explore" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-  { label: "Dashboard", href: "/dashboard" },
-];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const toggleMenu = () => setIsOpen((prev) => !prev);
   const navigate = useNavigate();
  
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+
+  const navLinks: NavLinkItem[] = [
+  { label: "Home", href: "/" },
+  { label: "Explore", href: "/explore" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+   ...(user
+    ? [{ label: "Dashboard", href: "/dashboard" }]
+    : []),
+];
+
+
   const [isDark, setIsDark] = useState(() => 
     document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark'
   );
@@ -38,8 +45,6 @@ const Navbar = () => {
     setCurrentPath(location.pathname);
   }, [location]);
 
-  const { data: session } = authClient.useSession();
-  const user = session?.user;
 
   // Handle Logout Event Action
   const handleLogout = async () => {

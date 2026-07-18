@@ -112,7 +112,7 @@ app.get("/all-notes/:id", async (req, res) => {
 
     const result = await AllNotesCollection.findOne({
       _id: new ObjectId(id),
-    });
+    } as any);
 
     console.log("Database result found:", result); // 🔍 CHECK YOUR SERVER TERMINAL HERE
 
