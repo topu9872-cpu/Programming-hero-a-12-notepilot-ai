@@ -1,22 +1,21 @@
-import express from 'express';
+import express from "express";
 
-import cors from 'cors';
-import { MongoClient, ObjectId } from 'mongodb'; 
-import { toNodeHandler } from 'better-auth/node';
+import cors from "cors";
+import { MongoClient, Filter, Sort } from "mongodb";
+import { toNodeHandler } from "better-auth/node";
 
-import { getAuth } from '../auth';
-
-
+import { getAuth } from "../auth";
 
 const app = express();
 
 app.set("trust proxy", true);
-app.use(cors({
-  origin: process.env.VITE_APP_URL,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.VITE_APP_URL,
+    credentials: true,
+  }),
+);
 app.use(express.json());
-
 
 // 🟢 The Cleanest Way: Just use the base path with no wildcard symbols
 app.use("/api/auth", async (req, res) => {
@@ -32,8 +31,21 @@ interface Note {
   title: string;
   description: string;
   content: string;
-  // other fields...
+  category?: string;
+  tags?: string[];
+  views?: number;
+  featured?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
+
+type NotesQuery = {
+  page?: string;
+  limit?: string;
+  search?: string;
+  sort?: string;
+};
+
 const db = client.db("NotePilot");
 
 const AllNotesCollection = db.collection<Note>("All_Notes");
@@ -43,34 +55,76 @@ async function startServer() {
     await client.connect();
     console.log("⚡ Connected successfully to MongoDB");
 
-app.get("/all-notes", async (_req, res) => {
-  const result = await AllNotesCollection.find().toArray();
+    app.get("/all-notes", async (req, res) => {
+      const query = req.query as NotesQuery;
+      const requestedPage = Math.max(1, Number(query.page ?? 1));
+      const requestedLimit = Math.min(
+        Math.max(Number(query.limit ?? 8), 1),
+        50,
+      );
+      const searchTerm = String(query.search ?? "").trim();
+      const sortParam = String(query.sort ?? "newest").toLowerCase();
 
+      const filter: Filter<Note> = {};
 
-  res.json(result);
-});
+      if (searchTerm) {
+        const regex = new RegExp(searchTerm, "i");
+        filter.$or = [
+          { title: regex },
+          { description: regex },
+          { content: regex },
+          { category: regex },
+          { tags: regex },
+        ];
+      }
 
-app.get("/all-notes/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+      const sortMap: Record<string, Sort> = {
+        newest: { createdAt: -1 },
+        oldest: { createdAt: 1 },
+        mostViewed: { views: -1 },
+        featured: { featured: -1 },
+      };
 
-    console.log("Received ID:", id);
+      const sortCriteria = sortMap[sortParam] || { createdAt: -1 };
 
-    const result = await AllNotesCollection.findOne({
-      _id: id,
+      const totalNotes = await AllNotesCollection.countDocuments(filter);
+      const totalPages = Math.max(1, Math.ceil(totalNotes / requestedLimit));
+      const currentPage = Math.min(requestedPage, totalPages);
+
+      const notes = await AllNotesCollection.find(filter)
+        .sort(sortCriteria)
+        .skip((currentPage - 1) * requestedLimit)
+        .limit(requestedLimit)
+        .toArray();
+
+      res.json({
+        notes,
+        totalNotes,
+        currentPage,
+        totalPages,
+      });
     });
 
-    console.log("Found data:", result);
+    app.get("/all-notes/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
 
-    res.json(result);
+        console.log("Received ID:", id);
 
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Server error"
+        const result = await AllNotesCollection.findOne({
+          _id: id,
+        });
+
+        console.log("Found data:", result);
+
+        res.json(result);
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({
+          message: "Server error",
+        });
+      }
     });
-  }
-});
 
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");
