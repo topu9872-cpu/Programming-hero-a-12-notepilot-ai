@@ -219,6 +219,15 @@ async function startServer() {
   res.json(result);
 });
 
+app.delete('/delete-student-notes/:id', async(req, res)=>{
+  const { id }=req.params
+
+
+  const result=await AllNotesCollection.deleteOne({_id: new ObjectId(id)} as any)
+  console.log(result)
+  res.json(result)
+})
+
       const sortCriteria = sortMap[sortParam] || { createdAt: -1 };
 
       // 4. Run accurate pagination metrics scoped to this specific user

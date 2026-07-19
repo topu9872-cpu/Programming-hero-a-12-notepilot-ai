@@ -199,23 +199,19 @@ const MyNotes = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this note?")) {
-      try {
-        // Optimistic UI removal
-        setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
-        
-        // Backend call
-        if (typeof deleteNote === 'function') {
-          await deleteNote(id);
-        }
-        
+    try {
+      const res = await deleteNote(id);
+
+      if (res.acknowledged) {
         toast.success("Note deleted successfully.");
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to delete the note. Please try again.");
-        // Refetch notes to restore the UI if the deletion failed
-        fetchNotes();
+      
+
+navigate(0);
       }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete the note. Please try again.");
+      fetchNotes();
     }
   };
 

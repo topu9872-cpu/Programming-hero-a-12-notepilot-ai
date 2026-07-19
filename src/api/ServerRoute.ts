@@ -136,16 +136,12 @@ export const removeFavorite = async (noteId: string, userId: string) => {
 
   return res.json();
 };
+
+
 export const deleteNote = async ( id: string) => {
-  const res = await fetch(`${API}/favorited`, {
+  const res = await fetch(`${API}/delete-student-notes/${id}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      
-      id,
-    }),
+   
   });
 
   return res.json();
