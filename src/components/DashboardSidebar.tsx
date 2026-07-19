@@ -17,7 +17,6 @@ const links = [
   { to: "/dashboard/notes", icon: AiOutlineFile, text: "My Notes" },
   { to: "/dashboard/create-note", icon: AiOutlineEdit, text: "Create Note" },
   { to: "/dashboard/favorites", icon: AiOutlineStar, text: "Favorites" },
-  { to: "/dashboard/trash", icon: AiOutlineDelete, text: "Trash" },
   { to: "/dashboard/profile", icon: AiOutlineUser, text: "Profile" },
   
 ];

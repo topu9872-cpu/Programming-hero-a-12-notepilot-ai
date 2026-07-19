@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import Home from '../pages/Home/Home';
 import Features from '../pages/Features/Features';
-import Pricing from '../pages/Pricing/Pricing';
 import About from '../pages/About/About';
 import Contact from '../pages/Contact/Contact';
 import Login from '../pages/Login/Login';
@@ -14,7 +13,6 @@ import DashboardHome from '../pages/DashboardHome';
 import MyNotes from '../pages/MyNotes';
 import CreateNote from '../pages/CreateNote';
 import FavoritesPage from '../pages/Favorites';
-import TrashPage from '../pages/TrashPage';
 import ProfilePage from '../pages/Profile';
 import NoteDetails from '../pages/Explore/ExploreDetails';
 
@@ -25,7 +23,6 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home /> },
       { path: '/features', element: <Features /> },
-      { path: '/pricing', element: <Pricing /> },
       { path: '/about', element: <About /> },
       { path: '/contact', element: <Contact /> },
       { path: '/login', element: <Login /> },
@@ -56,10 +53,7 @@ const router = createBrowserRouter([
         path: "/dashboard/favorites",
         element: <FavoritesPage />,
       },
-      {
-        path: "/dashboard/trash",
-        element: <TrashPage />,
-      },
+     
       {
         path: "/dashboard/profile",
         element: <ProfilePage />,
