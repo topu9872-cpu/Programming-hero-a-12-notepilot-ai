@@ -10,7 +10,6 @@ import {
   Trash2,
   Heart,
 } from "lucide-react";
-import { RiFolderOpenLine } from "react-react-icons/ri"; // Note: verify your package name, standard is 'react-icons/ri'
 import { RiFolderOpenLine as FolderIcon } from "react-icons/ri"; 
 import { authClient } from "../lib/auth-client";
 import { getMyNotes, updateNote, deleteNote } from "../api/ServerRoute";

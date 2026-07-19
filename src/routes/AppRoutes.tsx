@@ -15,13 +15,20 @@ import CreateNote from '../pages/CreateNote';
 import FavoritesPage from '../pages/Favorites';
 import ProfilePage from '../pages/Profile';
 import NoteDetails from '../pages/Explore/ExploreDetails';
+import { Suspense } from 'react';
+import { NotePilotLoader } from '../components/NotePilotLoader';
+import NotFoundPage from '../pages/NotFoundPage';
+import NotFound from '../pages/NotFound';
 
 
 const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
-      { path: '/', element: <Home /> },
+      
+      { path: '/', element: <Home />,
+         errorElement: <NotFoundPage />,
+       },
       { path: '/features', element: <Features /> },
       { path: '/about', element: <About /> },
       { path: '/contact', element: <Contact /> },
@@ -29,6 +36,10 @@ const router = createBrowserRouter([
       { path: '/signup', element: <Signup /> },
       { path: '/explore', element: <Explore /> },
       { path: '/explore/:id', element: <NoteDetails /> },
+      {
+  path: "*",
+  element: <NotFound />
+}
     ],
 
   },
@@ -58,15 +69,21 @@ const router = createBrowserRouter([
         path: "/dashboard/profile",
         element: <ProfilePage />,
       },
+      {
+  path: "*",
+  element: <NotFound />
+}
     ],
   },
 ]);
 
 const AppRoutes = () => {
   return <>
-
+<Suspense fallback={<NotePilotLoader/>}>
+ <RouterProvider router={router} />
+</Suspense>
   
-   <RouterProvider router={router} />
+  
   </>  
 };
 
