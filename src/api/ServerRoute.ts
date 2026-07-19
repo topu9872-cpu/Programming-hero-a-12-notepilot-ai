@@ -166,7 +166,6 @@ export const notePost = async (body: Note) => {
 };
 
 export const updateNote = async (noteId: string, body: Partial<Note>) => {
-  console.log(noteId,body)
   const res = await fetch(`${API}/all-notes/${encodeURIComponent(noteId)}`, {
     method: "PATCH",
     headers: {
@@ -190,5 +189,56 @@ export const getUsersFavorite = async (id: string) => {
   if (!res.ok) {
     throw new Error("Something went wrong");
   }
+  return res.json();
+};
+
+
+
+
+
+
+
+
+export const generateSummary = async (
+  title: string,
+  content: string
+) => {
+  const res = await fetch(`${API}/api/ai/summary`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title,
+      content,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to generate summary");
+  }
+
+  return res.json();
+};
+
+export const classifyNote = async (
+  title: string,
+  content: string
+) => {
+  const res = await fetch(`${API}/api/ai/classify`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title,
+      content,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to classify note");
+  }
+
   return res.json();
 };

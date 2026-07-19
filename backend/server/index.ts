@@ -5,6 +5,7 @@ import { MongoClient, Filter, Sort, ObjectId } from "mongodb";
 import { toNodeHandler } from "better-auth/node";
 
 import { getAuth } from "../auth";
+import { ai } from "../ai/gemini";
 
 const app = express();
 
@@ -224,7 +225,7 @@ app.delete('/delete-student-notes/:id', async(req, res)=>{
 
 
   const result=await AllNotesCollection.deleteOne({_id: new ObjectId(id)} as any)
-  console.log(result)
+
   res.json(result)
 })
 
@@ -248,6 +249,120 @@ app.delete('/delete-student-notes/:id', async(req, res)=>{
         totalPages,
       });
     });
+
+
+
+
+
+app.post("/api/ai/summary", async (req, res) => {
+  try {
+
+    const { title, content } = req.body || {};
+
+    if (!title || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and content are required.",
+      });
+    }
+
+    const prompt = `
+You are an expert note assistant.
+
+Summarize the following note into concise bullet points.
+
+Title:
+${title}
+
+Content:
+${content}
+
+Rules:
+- Keep the summary clear.
+- Use 3-6 bullet points.
+- Do not add information that isn't in the note.
+`;
+
+ const response = await ai.models.generateContent({
+  model: "gemini-3.5-flash",
+  contents: prompt,
+});
+const models = await ai.models.list();
+
+    const summary = response.text;
+
+    return res.status(200).json({
+      success: true,
+      summary,
+    });
+  } catch (error: any) {
+    console.error("Gemini Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error?.message || "Something went wrong",
+    });
+  }
+});
+
+
+
+
+app.post("/api/ai/classify", async (req, res) => {
+  try {
+    const { content } = req.body || {};
+
+    if (!content) {
+      return res.status(400).json({
+        success: false,
+        message: "Content is required",
+      });
+    }
+
+    const prompt = `
+Analyze this note and return ONLY valid JSON.
+
+{
+  "category": "",
+  "tags": [],
+  "difficulty": "Beginner | Intermediate | Advanced"
+}
+
+Note:
+${content}
+`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: prompt,
+    });
+
+    const text = response.text?.trim() || "{}";
+
+    const cleaned = text.replace(/```json|```/g, "").trim();
+
+    const result = JSON.parse(cleaned);
+
+    res.json({
+      success: true,
+      result,
+    });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+
+
+
+
+
+
+
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");
     });

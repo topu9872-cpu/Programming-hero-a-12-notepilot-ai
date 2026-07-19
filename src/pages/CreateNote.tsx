@@ -18,6 +18,7 @@ import { authClient } from "../lib/auth-client";
 import { ImageBBUpload } from "../lib/ImageBBUpload";
 import { notePost } from "../api/ServerRoute";
 import { toast } from "sonner";
+import GeminiAi from "../ui/GeminiAi";
 
 // 1. Updated Interface to support the Author model properties
 interface NoteAuthor {
@@ -76,13 +77,13 @@ export default function CreateNote() {
   const user = session?.user;
 
   const [formData, setFormData] = useState<NoteSchemaData>({
-    title: "Mastering CSS Grid and Subgrid Layouts",
-    description: "Aligning complex UI components across nested structures cleanly.",
-    content: "Why subgrid is the true game-changer for dynamic multi-column card designs...",
+    title: "",
+    description: "",
+    content: "",
     category: "Programming",
     coverImage: null,
     coverGradient: "from-indigo-500 to-purple-600",
-    tags: ["CSS", "Design-Systems", "UI"],
+    tags: [],
     readTime: "6 min",
     featured: false,
     aiGenerated: false,
@@ -98,7 +99,6 @@ export default function CreateNote() {
   const [tagInput, setTagInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(`Draft state synced: ${formData.updatedAt}`);
-  const [selectedAiFeature, setSelectedAiFeature] = useState<string | null>(null);
 
   const categoriesList = [
     "AI",
@@ -405,69 +405,13 @@ export default function CreateNote() {
 
         {/* SIDE PANELS */}
         <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-6">
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-855">
-              <div className="flex items-center gap-2">
-                <RiSparkling2Line className="w-4 h-4 text-indigo-500 animate-pulse" />
-                <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-purple-500 dark:from-indigo-400 dark:to-purple-300 bg-clip-text text-transparent">
-                  Gemini Core Context
-                </h2>
-              </div>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30">
-                Sync
-              </span>
-            </div>
+        
+ {/* GeminiAi component   */}
 
-            <div className="space-y-2">
-              {[
-                { id: "summary", label: "Generate Summary", shortcut: "⌥S", icon: <RiMagicLine /> },
-                { id: "writing", label: "Improve Writing", shortcut: "⌥I", icon: <RiText /> },
-                { id: "schema", label: "Suggest Schema Tags", shortcut: "⌥T", icon: <RiPriceTag3Line /> },
-                { id: "translate", label: "Translate Structure", shortcut: "⌥W", icon: <RiTranslate2 /> },
-                { id: "clean", label: "Analyze Cleanliness", shortcut: "⌥F", icon: <RiCheckDoubleLine /> },
-              ].map((btn) => {
-                const isSelected = selectedAiFeature === btn.id;
-                return (
-                  <button
-                    key={btn.id}
-                    type="button"
-                    onClick={() => setSelectedAiFeature(isSelected ? null : btn.id)}
-                    className={`w-full flex items-center justify-between p-2.5 text-left text-xs font-medium rounded-xl border transition-all ${
-                      isSelected
-                        ? "border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/30 shadow-xs"
-                        : "border-slate-150 dark:border-slate-800 text-slate-700 dark:text-slate-300 bg-slate-50/50 dark:bg-slate-950/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/40"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span className={isSelected ? "text-indigo-500" : "text-slate-400"}>{btn.icon}</span>
-                      <span>{btn.label}</span>
-                    </div>
-                    <span className={`text-[10px] ${isSelected ? "text-indigo-400" : "text-slate-400"}`}>
-                      {btn.shortcut}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-850 relative flex items-center">
-              <input
-                type="text"
-                placeholder={
-                  selectedAiFeature
-                    ? `Instruct context for ${selectedAiFeature}...`
-                    : "Instruct companion prompt..."
-                }
-                className="w-full pl-3 pr-10 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl focus:outline-none focus:border-indigo-500/50 transition-colors"
-              />
-              <button
-                type="button"
-                className="absolute right-1.5 p-1.5 rounded-lg text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors"
-              >
-                <RiSparkling2Line className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
+    <GeminiAi
+  title={formData.title}
+  content={formData.content}
+/>
         </aside>
       </div>
 

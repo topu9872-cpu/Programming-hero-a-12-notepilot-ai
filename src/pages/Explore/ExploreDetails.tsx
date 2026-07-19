@@ -50,7 +50,6 @@ useEffect(() => {
   const fetchNote = async () => {
     try {
       const rawData = await getAllNotesDetails(id);
-      console.log(rawData)
       if (!rawData) {
         toast.error("Document data record could not be found.");
         return;

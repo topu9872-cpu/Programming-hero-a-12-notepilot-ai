@@ -126,7 +126,6 @@ export default function FavoritesPage() {
 
       try {
         const responseData = await getUsersFavorite(user.id);
-        console.log(responseData)
         // Ensure data is treated as an array regardless of schema structure
         const rawArray = Array.isArray(responseData) ? responseData : responseData?.data || [];
         

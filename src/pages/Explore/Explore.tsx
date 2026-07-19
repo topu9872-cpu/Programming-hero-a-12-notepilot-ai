@@ -173,7 +173,6 @@ export default function Explore() {
       if (Array.isArray(data)) setNotes(data);
     });
   }, []);
-  console.log(notes);
   return (
     <div className="min-h-screen bg-amber-50/20 dark:bg-zinc-950 text-slate-900 dark:text-zinc-50 transition-colors duration-300 antialiased selection:bg-indigo-200">
       {/* AMBIENT SOFT FRIENDLY GLOWS */}
