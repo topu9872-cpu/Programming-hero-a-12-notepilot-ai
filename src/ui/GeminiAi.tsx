@@ -12,9 +12,18 @@ import { toast } from "sonner";
 type GeminiAiProps = {
   title: string;
   content: string;
+  onApplyClassification: (data: {
+    category: string;
+    tags: string[];
+    difficulty: string;
+  }) => void;
 };
 
-const GeminiAi = ({ title = "", content = "" }: GeminiAiProps) => {
+const GeminiAi = ({
+  title,
+  content,
+  onApplyClassification,
+}: GeminiAiProps) => {
   const [selectedAiFeature, setSelectedAiFeature] = useState<string | null>(
     null,
   );
@@ -34,6 +43,7 @@ const GeminiAi = ({ title = "", content = "" }: GeminiAiProps) => {
       const data = await generateSummary(title ?? "", content ?? "");
 
       setSummary(data.summary);
+
       toast.success("Summary generated.");
     } catch (err) {
       console.error(err);
@@ -55,6 +65,7 @@ const GeminiAi = ({ title = "", content = "" }: GeminiAiProps) => {
       const data = await classifyNote(title ?? "", content ?? "");
 
       setClassification(data.result);
+      onApplyClassification(data.result);
       toast.success("Tags generated.");
     } catch (err) {
       console.error(err);
@@ -159,8 +170,9 @@ const GeminiAi = ({ title = "", content = "" }: GeminiAiProps) => {
   </div>
 )}
 
-    
-      {summary && (
+  
+      {
+      summary && (
         <div className="mt-4 rounded-xl border border-green-200 bg-green-50 dark:bg-slate-800 p-4">
           <h3 className="font-semibold mb-2">AI Summary</h3>
           <p className="text-sm whitespace-pre-wrap">{summary}</p>
@@ -191,6 +203,7 @@ const GeminiAi = ({ title = "", content = "" }: GeminiAiProps) => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };

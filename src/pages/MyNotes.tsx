@@ -8,13 +8,15 @@ import {
   SlidersHorizontal,
   Pencil,
   Trash2,
+  Heart,
 } from "lucide-react";
-import { RiFolderOpenLine } from "react-icons/ri";
+import { RiFolderOpenLine } from "react-react-icons/ri"; // Note: verify your package name, standard is 'react-icons/ri'
+import { RiFolderOpenLine as FolderIcon } from "react-icons/ri"; 
 import { authClient } from "../lib/auth-client";
-// Assuming deleteNote exists in your ServerRoute file alongside updateNote
 import { getMyNotes, updateNote, deleteNote } from "../api/ServerRoute";
 import { ImageBBUpload } from "../lib/ImageBBUpload";
 import { toast } from "sonner";
+import { DeleteConfirmModal } from "../ui/DeleteConfirmModal";
 
 interface Note {
   id: string;
@@ -93,6 +95,9 @@ const MyNotes = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [tagInput, setTagInput] = useState("");
 
+  // Added missing states for deletion modal
+  const [activeDeleteTarget, setActiveDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+
   const categoriesList = [
     "All",
     "AI",
@@ -105,7 +110,6 @@ const MyNotes = () => {
     "Productivity",
   ];
 
-  // Debounce search input to prevent API spam
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
@@ -150,7 +154,7 @@ const MyNotes = () => {
             category: String(note.category || "Uncategorized"),
             tags: Array.isArray(note.tags) ? note.tags.map(String) : [],
             date: String(note.createdAt || note.publishedAt || note.date || ""),
-            favorite: false, // Defaulting to false unless your backend returns this
+            favorite: false, 
             coverImage: note.coverImage ? String(note.coverImage) : undefined,
           }))
         : [];
@@ -166,7 +170,6 @@ const MyNotes = () => {
     }
   };
 
-  // Run fetchNotes when debouncedSearch or page/sort changes
   useEffect(() => {
     fetchNotes();
   }, [user?.id, page, debouncedSearch, sort]);
@@ -177,7 +180,6 @@ const MyNotes = () => {
 
     const newFavoriteStatus = !noteToUpdate.favorite;
 
-    // Optimistic UI update
     setNotes((prevNotes) =>
       prevNotes.map((note) =>
         note.id === id ? { ...note, favorite: newFavoriteStatus } : note,
@@ -185,10 +187,8 @@ const MyNotes = () => {
     );
 
     try {
-      // Execute the backend call (uncomment/adjust if your backend supports favoriting)
-      // await updateNote(id, { favorite: newFavoriteStatus });
+      // Optional: await updateNote(id, { favorite: newFavoriteStatus });
     } catch (error) {
-      // Revert UI on failure
       toast.error("Failed to update favorite status.");
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
@@ -198,20 +198,19 @@ const MyNotes = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const executeDelete = async () => {
+    if (!activeDeleteTarget) return;
     try {
-      const res = await deleteNote(id);
-
-      if (res.acknowledged) {
+      const res = await deleteNote(activeDeleteTarget.id);
+      if (res.acknowledged || res.success || res) {
         toast.success("Note deleted successfully.");
-      
-
-navigate(0);
+        fetchNotes();
       }
     } catch (error) {
       console.error(error);
       toast.error("Failed to delete the note. Please try again.");
-      fetchNotes();
+    } finally {
+      setActiveDeleteTarget(null);
     }
   };
 
@@ -286,7 +285,6 @@ navigate(0);
 
     setIsSaving(true);
     const today = new Date().toISOString().split("T")[0];
-
     let coverImageUrl: string | null = null;
 
     if (editNote.coverImage && editNote.coverImage instanceof File) {
@@ -381,12 +379,12 @@ navigate(0);
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center gap-1">
-            <RiFolderOpenLine className="w-3 h-3 text-slate-400" />
+            <FolderIcon className="w-3 h-3 text-slate-400" />
             <select
               value={category}
               onChange={(e) => {
                 setCategory(e.target.value);
-                setPage(1); // Reset pagination on category change
+                setPage(1);
               }}
               className="px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200"
             >
@@ -404,7 +402,7 @@ navigate(0);
               value={sort}
               onChange={(e) => {
                 setSort(e.target.value);
-                setPage(1); // Reset pagination on sort change
+                setPage(1);
               }}
               className="px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200"
             >
@@ -510,7 +508,7 @@ navigate(0);
                           <Pencil size={12} />
                         </button>
                         <button
-                          onClick={() => handleDelete(note.id)}
+                          onClick={() => setActiveDeleteTarget({ id: note.id, title: note.title })}
                           title="Delete Note"
                           className="hover:text-red-500 dark:hover:text-red-400 p-0.5 rounded transition"
                         >
@@ -524,10 +522,14 @@ navigate(0);
                       <span className="text-[9px] text-slate-400 font-medium">
                         {note.date}
                       </span>
+
                       <button
                         onClick={() => toggleFavorite(note.id)}
-                        className="focus:outline-none p-0.5"
-                      ></button>
+                        className={`focus:outline-none p-0.5 transition ${note.favorite ? "text-red-500" : "text-slate-400 hover:text-red-400"}`}
+                        title={note.favorite ? "Unfavorite" : "Favorite"}
+                      >
+                        <Heart size={12} fill={note.favorite ? "currentColor" : "none"} />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -548,9 +550,7 @@ navigate(0);
                 Page {page} of {totalPages}
               </span>
               <button
-                onClick={() =>
-                  setPage((prev) => Math.min(totalPages, prev + 1))
-                }
+                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={page === totalPages}
                 className="px-3 py-1 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -561,6 +561,15 @@ navigate(0);
         </>
       )}
 
+      {/* Core Delete Confirmation Modal placed outside the card mapping loops */}
+      <DeleteConfirmModal
+        isOpen={activeDeleteTarget !== null}
+        onClose={() => setActiveDeleteTarget(null)}
+        onConfirm={executeDelete}
+        noteTitle={activeDeleteTarget?.title || ""}
+      />
+
+      {/* Edit Modal Layout */}
       {editModalOpen && editNote && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
           <div className="w-full max-w-3xl overflow-hidden rounded-3xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-slate-900/10">
@@ -582,7 +591,7 @@ navigate(0);
               </button>
             </div>
 
-            <div className="space-y-6 p-6">
+            <div className="space-y-6 p-6 overflow-y-auto max-h-[70vh]">
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="space-y-2 text-xs font-medium text-slate-600 dark:text-slate-300">
                   Title
@@ -653,8 +662,8 @@ navigate(0);
                   />
                 </label>
 
-                <label className="space-y-2 text-xs font-medium text-slate-600 dark:text-slate-300">
-                  Tags
+                <div className="space-y-2 text-xs font-medium text-slate-600 dark:text-slate-300">
+                  <span>Tags</span>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -676,7 +685,7 @@ navigate(0);
                       Add
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 pt-1">
                     {editNote.tags.map((tag, idx) => (
                       <button
                         key={idx}
@@ -689,11 +698,11 @@ navigate(0);
                       </button>
                     ))}
                   </div>
-                </label>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
-                <label className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
+                <label className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editNote.featured}
@@ -704,7 +713,7 @@ navigate(0);
                   />
                   Featured
                 </label>
-                <label className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
+                <label className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editNote.aiGenerated}

@@ -354,7 +354,7 @@ export default function About() {
           <div className="max-w-md mx-auto p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-md text-center space-y-4 hover:border-indigo-200 dark:hover:border-zinc-700 transition-all duration-200">
             <div className="relative inline-block">
               <img 
-                src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=180&q=80" 
+                src="https://i.ibb.co.com/7MzpLXN/228337083-removebg-preview.png" 
                 alt="Mehedi Hasan Topu"
                 className="w-20 h-20 rounded-full mx-auto object-cover border-2 border-slate-100 dark:border-zinc-800 shadow"
               />

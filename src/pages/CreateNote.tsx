@@ -98,7 +98,9 @@ export default function CreateNote() {
 
   const [tagInput, setTagInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState(`Draft state synced: ${formData.updatedAt}`);
+  const [lastSaved, setLastSaved] = useState(
+    `Draft state synced: ${formData.updatedAt}`,
+  );
 
   const categoriesList = [
     "AI",
@@ -112,7 +114,10 @@ export default function CreateNote() {
   ];
 
   const metrics = useMemo(() => {
-    const words = formData.content.trim() === "" ? 0 : formData.content.trim().split(/\s+/).length;
+    const words =
+      formData.content.trim() === ""
+        ? 0
+        : formData.content.trim().split(/\s+/).length;
     return {
       wordCount: words,
       charCount: formData.content.length,
@@ -126,6 +131,21 @@ export default function CreateNote() {
       [field]: value,
       updatedAt: new Date().toISOString().split("T")[0],
     }));
+  };
+
+  const handleAIClassification = (data: {
+    category: string;
+    tags: string[];
+    difficulty: string;
+  }) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: data.category,
+      tags: data.tags,
+      updatedAt: new Date().toISOString().split("T")[0],
+    }));
+
+    toast.success("AI suggestions applied!");
   };
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
@@ -170,7 +190,8 @@ export default function CreateNote() {
         status: targetStatus,
         author: dynamicAuthor,
         updatedAt: todayStr,
-        publishedAt: targetStatus === "Published" ? todayStr : formData.publishedAt,
+        publishedAt:
+          targetStatus === "Published" ? todayStr : formData.publishedAt,
       };
 
       setFormData((prev) => ({
@@ -179,7 +200,7 @@ export default function CreateNote() {
       }));
 
       setLastSaved(
-        `Saved successfully at ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+        `Saved successfully at ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
       );
 
       const body: NoteSchemaData = {
@@ -193,7 +214,7 @@ export default function CreateNote() {
         if (data.acknowledged) {
           toast.success("Note created successfully!");
           // FIXED: passing real default runtime runtime object definition value now instead of a type reference!
-          setFormData(emptyFormState); 
+          setFormData(emptyFormState);
         } else {
           toast.error("Something went wrong!");
         }
@@ -209,10 +230,14 @@ export default function CreateNote() {
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 mb-8 border-b border-slate-200 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className={`p-1.5 rounded-lg text-white shadow-sm bg-gradient-to-tr ${formData.coverGradient}`}>
+            <span
+              className={`p-1.5 rounded-lg text-white shadow-sm bg-gradient-to-tr ${formData.coverGradient}`}
+            >
               <RiLayoutGridLine className="w-5 h-5" />
             </span>
-            <h1 className="text-2xl font-semibold tracking-tight">Structured Note Schema</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Structured Note Schema
+            </h1>
           </div>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Editing structural dataset for your full-stack notes architecture.
@@ -257,7 +282,9 @@ export default function CreateNote() {
                 type="text"
                 placeholder="Add structural description..."
                 value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
                 className="w-full text-sm bg-transparent border-0 text-slate-500 dark:text-slate-400 focus:ring-0 focus:outline-none placeholder-slate-300 dark:placeholder-slate-700"
               />
             </div>
@@ -266,7 +293,9 @@ export default function CreateNote() {
             <div className="space-y-2">
               <div className="flex items-center justify-between py-1.5 px-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 text-xs">
                 <span className="font-mono">Payload property: "content"</span>
-                <span className="text-slate-400 font-medium">Read time estimate: {metrics.readTime}</span>
+                <span className="text-slate-400 font-medium">
+                  Read time estimate: {metrics.readTime}
+                </span>
               </div>
               <textarea
                 placeholder="Write target document layout body contents..."
@@ -287,7 +316,9 @@ export default function CreateNote() {
                 <div className="relative">
                   <select
                     value={formData.category}
-                    onChange={(e) => handleInputChange("category", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("category", e.target.value)
+                    }
                     className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl focus:outline-none cursor-pointer text-slate-900 dark:text-slate-100 shadow-sm appearance-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   >
                     {categoriesList.map((cat) => (
@@ -301,7 +332,11 @@ export default function CreateNote() {
                     ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <svg
+                      className="fill-current h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
                       <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                     </svg>
                   </div>
@@ -351,7 +386,12 @@ export default function CreateNote() {
                     {tag}
                     <button
                       type="button"
-                      onClick={() => handleInputChange("tags", formData.tags.filter((_, i) => i !== idx))}
+                      onClick={() =>
+                        handleInputChange(
+                          "tags",
+                          formData.tags.filter((_, i) => i !== idx),
+                        )
+                      }
                       className="hover:text-red-500 ml-1 font-bold"
                     >
                       &times;
@@ -367,7 +407,9 @@ export default function CreateNote() {
                 <input
                   type="checkbox"
                   checked={formData.featured}
-                  onChange={(e) => handleInputChange("featured", e.target.checked)}
+                  onChange={(e) =>
+                    handleInputChange("featured", e.target.checked)
+                  }
                   className="rounded text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 w-4 h-4"
                 />
                 <div className="flex flex-col">
@@ -379,11 +421,15 @@ export default function CreateNote() {
                 <input
                   type="checkbox"
                   checked={formData.aiGenerated}
-                  onChange={(e) => handleInputChange("aiGenerated", e.target.checked)}
+                  onChange={(e) =>
+                    handleInputChange("aiGenerated", e.target.checked)
+                  }
                   className="rounded text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 w-4 h-4"
                 />
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium">AI Assisted Content</span>
+                  <span className="text-xs font-medium">
+                    AI Assisted Content
+                  </span>
                 </div>
               </label>
             </div>
@@ -405,13 +451,13 @@ export default function CreateNote() {
 
         {/* SIDE PANELS */}
         <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-6">
-        
- {/* GeminiAi component   */}
+          {/* GeminiAi component   */}
 
-    <GeminiAi
-  title={formData.title}
-  content={formData.content}
-/>
+          <GeminiAi
+            title={formData.title}
+            content={formData.content}
+            onApplyClassification={handleAIClassification}
+          />
         </aside>
       </div>
 
@@ -419,10 +465,16 @@ export default function CreateNote() {
       <footer className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-xs text-xs text-slate-500 dark:text-slate-400 font-mono">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <div>
-            WORDS: <span className="font-semibold text-slate-700 dark:text-slate-300">{metrics.wordCount}</span>
+            WORDS:{" "}
+            <span className="font-semibold text-slate-700 dark:text-slate-300">
+              {metrics.wordCount}
+            </span>
           </div>
           <div>
-            CHARS: <span className="font-semibold text-slate-700 dark:text-slate-300">{metrics.charCount}</span>
+            CHARS:{" "}
+            <span className="font-semibold text-slate-700 dark:text-slate-300">
+              {metrics.charCount}
+            </span>
           </div>
           <div>
             STATUS:{" "}
@@ -431,12 +483,15 @@ export default function CreateNote() {
             </span>
           </div>
           <div className="flex items-center gap-1 text-slate-400">
-            <RiTimeLine className="w-3.5 h-3.5" /> <span>UPDATED: {formData.updatedAt}</span>
+            <RiTimeLine className="w-3.5 h-3.5" />{" "}
+            <span>UPDATED: {formData.updatedAt}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 py-1 px-2.5 rounded-lg border border-slate-100 dark:border-slate-850">
-          <div className={`h-1.5 w-1.5 rounded-full ${isSaving ? "bg-amber-400 animate-ping" : "bg-indigo-500"}`}></div>
+          <div
+            className={`h-1.5 w-1.5 rounded-full ${isSaving ? "bg-amber-400 animate-ping" : "bg-indigo-500"}`}
+          ></div>
           <span className="text-[11px] text-slate-600 dark:text-slate-400">
             {isSaving ? "Syncing active data model..." : lastSaved}
           </span>

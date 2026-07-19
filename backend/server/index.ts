@@ -205,29 +205,29 @@ async function startServer() {
         featured: { featured: -1 },
       };
 
+      app.patch("/all-notes/:id", async (req, res) => {
+        const { id } = req.params;
+        const body = req.body;
 
-   app.patch("/all-notes/:id", async (req, res) => {
-  const { id } = req.params;
-  const body = req.body;
+        const result = await AllNotesCollection.updateOne(
+          { _id: new ObjectId(id) } as any,
+          {
+            $set: body,
+          },
+        );
 
-  const result = await AllNotesCollection.updateOne(
-    { _id: new ObjectId(id) } as any,
-    {
-      $set: body,
-    }
-  );
+        res.json(result);
+      });
 
-  res.json(result);
-});
+      app.delete("/delete-student-notes/:id", async (req, res) => {
+        const { id } = req.params;
 
-app.delete('/delete-student-notes/:id', async(req, res)=>{
-  const { id }=req.params
+        const result = await AllNotesCollection.deleteOne({
+          _id: new ObjectId(id),
+        } as any);
 
-
-  const result=await AllNotesCollection.deleteOne({_id: new ObjectId(id)} as any)
-
-  res.json(result)
-})
+        res.json(result);
+      });
 
       const sortCriteria = sortMap[sortParam] || { createdAt: -1 };
 
@@ -250,23 +250,18 @@ app.delete('/delete-student-notes/:id', async(req, res)=>{
       });
     });
 
+    app.post("/api/ai/summary", async (req, res) => {
+      try {
+        const { title, content } = req.body || {};
 
+        if (!title || !content) {
+          return res.status(400).json({
+            success: false,
+            message: "Title and content are required.",
+          });
+        }
 
-
-
-app.post("/api/ai/summary", async (req, res) => {
-  try {
-
-    const { title, content } = req.body || {};
-
-    if (!title || !content) {
-      return res.status(400).json({
-        success: false,
-        message: "Title and content are required.",
-      });
-    }
-
-    const prompt = `
+        const prompt = `
 You are an expert note assistant.
 
 Summarize the following note into concise bullet points.
@@ -283,43 +278,40 @@ Rules:
 - Do not add information that isn't in the note.
 `;
 
- const response = await ai.models.generateContent({
-  model: "gemini-3.5-flash",
-  contents: prompt,
-});
-const models = await ai.models.list();
+        const response = await ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: prompt,
+        });
+        const models = await ai.models.list();
 
-    const summary = response.text;
+        const summary = response.text;
 
-    return res.status(200).json({
-      success: true,
-      summary,
+        return res.status(200).json({
+          success: true,
+          summary,
+        });
+      } catch (error: any) {
+        console.error("Gemini Error:", error);
+
+        return res.status(500).json({
+          success: false,
+          message: error?.message || "Something went wrong",
+        });
+      }
     });
-  } catch (error: any) {
-    console.error("Gemini Error:", error);
 
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Something went wrong",
-    });
-  }
-});
+    app.post("/api/ai/classify", async (req, res) => {
+      try {
+        const { content } = req.body || {};
 
+        if (!content) {
+          return res.status(400).json({
+            success: false,
+            message: "Content is required",
+          });
+        }
 
-
-
-app.post("/api/ai/classify", async (req, res) => {
-  try {
-    const { content } = req.body || {};
-
-    if (!content) {
-      return res.status(400).json({
-        success: false,
-        message: "Content is required",
-      });
-    }
-
-    const prompt = `
+        const prompt = `
 Analyze this note and return ONLY valid JSON.
 
 {
@@ -332,36 +324,29 @@ Note:
 ${content}
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: prompt,
+        const response = await ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: prompt,
+        });
+
+        const text = response.text?.trim() || "{}";
+
+        const cleaned = text.replace(/```json|```/g, "").trim();
+
+        const result = JSON.parse(cleaned);
+
+        res.json({
+          success: true,
+          result,
+        });
+      } catch (error: any) {
+        console.error(error);
+        res.status(500).json({
+          success: false,
+          message: error.message,
+        });
+      }
     });
-
-    const text = response.text?.trim() || "{}";
-
-    const cleaned = text.replace(/```json|```/g, "").trim();
-
-    const result = JSON.parse(cleaned);
-
-    res.json({
-      success: true,
-      result,
-    });
-  } catch (error: any) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-});
-
-
-
-
-
-
-
 
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");

@@ -2,14 +2,14 @@ import { Navigate, Outlet } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import { authClient } from "../lib/auth-client";
 import { toast } from "sonner";
+import { NotePilotLoader } from "./NotePilotLoader";
 
 const DashboardLayout = () => {
   const { data: session, isPending } = authClient.useSession();
 
   if (isPending) {
-    return <div>Loading...</div>;
-  }
-
+  return <NotePilotLoader />;
+}
   if (!session?.user) {
     toast.warning('please login')
     return <Navigate to="/login" />;
