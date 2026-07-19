@@ -136,6 +136,20 @@ export const removeFavorite = async (noteId: string, userId: string) => {
 
   return res.json();
 };
+export const deleteNote = async ( id: string) => {
+  const res = await fetch(`${API}/favorited`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      
+      id,
+    }),
+  });
+
+  return res.json();
+};
 
 export const notePost = async (body: Note) => {
   const res = await fetch(`${API}/all-notes`, {
@@ -150,6 +164,25 @@ export const notePost = async (body: Note) => {
 
   if (!res.ok) {
     throw new Error(result.message || "Something went wrong");
+  }
+
+  return result;
+};
+
+export const updateNote = async (noteId: string, body: Partial<Note>) => {
+  console.log(noteId,body)
+  const res = await fetch(`${API}/all-notes/${encodeURIComponent(noteId)}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to update note");
   }
 
   return result;

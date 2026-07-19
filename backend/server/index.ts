@@ -107,13 +107,10 @@ async function startServer() {
     app.get("/all-notes/:id", async (req, res) => {
       try {
         const { id } = req.params;
-        console.log("Searching database for ID:", id); // Verify the ID received
 
         const result = await AllNotesCollection.findOne({
           _id: new ObjectId(id),
         } as any);
-
-        console.log("Database result found:", result); // 🔍 CHECK YOUR SERVER TERMINAL HERE
 
         if (!result) {
           return res.status(404).send({ message: "Note not found" });
@@ -206,6 +203,21 @@ async function startServer() {
         mostViewed: { views: -1 },
         featured: { featured: -1 },
       };
+
+
+   app.patch("/all-notes/:id", async (req, res) => {
+  const { id } = req.params;
+  const body = req.body;
+
+  const result = await AllNotesCollection.updateOne(
+    { _id: new ObjectId(id) } as any,
+    {
+      $set: body,
+    }
+  );
+
+  res.json(result);
+});
 
       const sortCriteria = sortMap[sortParam] || { createdAt: -1 };
 
