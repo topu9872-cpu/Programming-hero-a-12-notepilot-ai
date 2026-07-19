@@ -12,7 +12,7 @@ const DashboardLayout = () => {
 
   if (!session?.user) {
     toast.warning('please login')
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" />;
   }
   return (
     <div className="flex h-screen overflow-hidden bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-200">

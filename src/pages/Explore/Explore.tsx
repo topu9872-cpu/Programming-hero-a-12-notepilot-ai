@@ -76,7 +76,7 @@ const getIconForCategory = (category: string) => {
 };
 
 export default function Explore() {
-  type SortOption ='all'| "newest" | "oldest" | "mostViewed" | "featured";
+  type SortOption = "all" | "newest" | "oldest" | "mostViewed" | "featured";
 
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -84,9 +84,6 @@ export default function Explore() {
   const [sortOption, setSortOption] = useState<SortOption>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [followedCreators, setFollowedCreators] = useState<string[]>([]);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const sortOptions: { value: SortOption; label: string }[] = [
@@ -96,26 +93,6 @@ export default function Explore() {
     { value: "mostViewed", label: "Most Viewed" },
     { value: "featured", label: "Featured" },
   ];
-
-  // ==========================================
-  // HANDLERS
-  // ==========================================
-  const toggleFollow = (creatorId: string) => {
-    setFollowedCreators((prev) =>
-      prev.includes(creatorId)
-        ? prev.filter((id) => id !== creatorId)
-        : [...prev, creatorId],
-    );
-  };
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newsletterEmail.trim()) {
-      setIsSubscribed(true);
-      setNewsletterEmail("");
-      setTimeout(() => setIsSubscribed(false), 4000);
-    }
-  };
 
   // ==========================================
   // MEMOIZED FILTER LOGIC & UNIQUE CATEGORIES
@@ -196,7 +173,7 @@ export default function Explore() {
       if (Array.isArray(data)) setNotes(data);
     });
   }, []);
-
+  console.log(notes);
   return (
     <div className="min-h-screen bg-amber-50/20 dark:bg-zinc-950 text-slate-900 dark:text-zinc-50 transition-colors duration-300 antialiased selection:bg-indigo-200">
       {/* AMBIENT SOFT FRIENDLY GLOWS */}
@@ -400,7 +377,7 @@ export default function Explore() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <img
-                          src={note.author?.avatar || "/avatar.jpg"}
+                          src={note.coverImage || "/avatar.jpg"}
                           alt={note.author?.name}
                           className="w-7 h-7 rounded-full object-cover ring-2 ring-slate-100 dark:ring-zinc-800"
                         />
@@ -471,8 +448,6 @@ export default function Explore() {
             </div>
           </div>
         </section>
-
-       
       </div>
     </div>
   );

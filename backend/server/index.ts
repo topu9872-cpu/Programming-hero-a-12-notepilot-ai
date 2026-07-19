@@ -53,7 +53,6 @@ async function startServer() {
   try {
     // ১. ডাটাবেজের সাথে কানেক্ট করুন
     await client.connect();
-   
 
     app.get("/all-notes", async (req, res) => {
       const query = req.query as NotesQuery;
@@ -105,70 +104,75 @@ async function startServer() {
       });
     });
 
-app.get("/all-notes/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log("Searching database for ID:", id); // Verify the ID received
+    app.get("/all-notes/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        console.log("Searching database for ID:", id); // Verify the ID received
 
-    const result = await AllNotesCollection.findOne({
-      _id: new ObjectId(id),
-    } as any);
+        const result = await AllNotesCollection.findOne({
+          _id: new ObjectId(id),
+        } as any);
 
-    console.log("Database result found:", result); // 🔍 CHECK YOUR SERVER TERMINAL HERE
+        console.log("Database result found:", result); // 🔍 CHECK YOUR SERVER TERMINAL HERE
 
-    if (!result) {
-      return res.status(404).send({ message: "Note not found" });
-    }
+        if (!result) {
+          return res.status(404).send({ message: "Note not found" });
+        }
 
-    // Explicitly send as JSON to ensure the content-type is correct
-    res.status(200).json(result); 
-  } catch (error) {
-    console.error("Backend Error:", error);
-    res.status(500).send({ message: "Internal server error" });
-  }
-});
-
-
-app.post("/favorited", async (req, res) => {
- 
-
-  const body = req.body;
-
-  const exists = await FavoritedCollection.findOne({
-    "note._id": body.note._id,
-    "user.id": body.user.id,
-  });
-
- 
-
-  if (exists) {
-    return res.status(409).json({
-      message: "Already favorited",
+        // Explicitly send as JSON to ensure the content-type is correct
+        res.status(200).json(result);
+      } catch (error) {
+        console.error("Backend Error:", error);
+        res.status(500).send({ message: "Internal server error" });
+      }
     });
-  }
 
-  const result = await FavoritedCollection.insertOne(body);
+    app.post("/favorited", async (req, res) => {
+      const body = req.body;
 
-  res.json(result);
-});
+      const exists = await FavoritedCollection.findOne({
+        "note._id": body.note._id,
+        "user.id": body.user.id,
+      });
 
-app.delete("/favorited", async (req, res) => {
-  const { noteId, userId } = req.body;
+      if (exists) {
+        return res.status(409).json({
+          message: "Already favorited",
+        });
+      }
 
-  const result = await FavoritedCollection.deleteOne({
-    "note._id": noteId,
-    "user.id": userId,
-  });
+      const result = await FavoritedCollection.insertOne(body);
 
-  res.json(result);
-});
+      res.json(result);
+    });
 
-app.post('/all-notes', async(req, res)=>{
-  const body=req.body
-  console.log(body)
-  const result=await AllNotesCollection.insertOne(body)
-  res.json(result)
-})
+    app.delete("/favorited", async (req, res) => {
+      const { noteId, userId } = req.body;
+
+      const result = await FavoritedCollection.deleteOne({
+        "note._id": noteId,
+        "user.id": userId,
+      });
+
+      res.json(result);
+    });
+    app.get("/favorited/:id", async (req, res) => {
+      const { id } = req.params;
+
+      const result = await FavoritedCollection.find({
+        "user.id": id,
+      }).toArray();
+
+      res.json(result);
+    });
+
+    
+    app.post("/all-notes", async (req, res) => {
+      const body = req.body;
+      console.log(body);
+      const result = await AllNotesCollection.insertOne(body);
+      res.json(result);
+    });
 
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");
@@ -178,6 +182,5 @@ app.post('/all-notes', async(req, res)=>{
     process.exit(1);
   }
 }
-
 
 startServer();
