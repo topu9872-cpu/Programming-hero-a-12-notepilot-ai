@@ -166,14 +166,67 @@ async function startServer() {
       res.json(result);
     });
 
-    
     app.post("/all-notes", async (req, res) => {
       const body = req.body;
-      console.log(body);
+
       const result = await AllNotesCollection.insertOne(body);
       res.json(result);
     });
 
+    app.get("/my-notes/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = req.query as NotesQuery;
+
+      const requestedPage = Math.max(1, Number(query.page ?? 1));
+      const requestedLimit = Math.min(
+        Math.max(Number(query.limit ?? 8), 1),
+        50,
+      );
+      const searchTerm = String(query.search ?? "").trim();
+      const sortParam = String(query.sort ?? "newest").toLowerCase();
+
+      const filter = {
+        "author.id": id,
+      } as any;
+
+      if (searchTerm) {
+        const regex = new RegExp(searchTerm, "i");
+        filter.$or = [
+          { title: regex },
+          { description: regex },
+          { content: regex },
+          { category: regex },
+          { tags: regex },
+        ];
+      }
+
+      const sortMap: Record<string, Sort> = {
+        newest: { createdAt: -1 },
+        oldest: { createdAt: 1 },
+        mostViewed: { views: -1 },
+        featured: { featured: -1 },
+      };
+
+      const sortCriteria = sortMap[sortParam] || { createdAt: -1 };
+
+      // 4. Run accurate pagination metrics scoped to this specific user
+      const totalNotes = await AllNotesCollection.countDocuments(filter);
+      const totalPages = Math.max(1, Math.ceil(totalNotes / requestedLimit));
+      const currentPage = Math.min(requestedPage, totalPages);
+
+      const notes = await AllNotesCollection.find(filter)
+        .sort(sortCriteria)
+        .skip((currentPage - 1) * requestedLimit)
+        .limit(requestedLimit)
+        .toArray();
+
+      res.json({
+        notes,
+        totalNotes,
+        currentPage,
+        totalPages,
+      });
+    });
     app.listen(3000, () => {
       console.log("🚀 Server running on http://localhost:3000");
     });

@@ -3,13 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   Search, 
-  ChevronDown, 
   Grid, 
   List, 
-  MoreVertical, 
-  Star, 
-  Plus 
+ 
+  Plus,
+  SlidersHorizontal,
+  Pencil,
+  Trash2
 } from 'lucide-react';
+import { RiFolderOpenLine } from 'react-icons/ri';
+
+interface Note {
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  tags: string[];
+  date: string;
+  favorite: boolean;
+  coverImage?: string;
+}
 
 const MyNotes = () => {
   const navigate = useNavigate();
@@ -18,191 +31,198 @@ const MyNotes = () => {
   const [sort, setSort] = useState('Latest');
   const [view, setView] = useState('grid');
   
-  // Real apps use state for dynamic mutations like toggling favorites
-  const [notes, setNotes] = useState([
+  const categoriesList = ["All", "AI", "Programming", "React", "TypeScript", "JavaScript", "Design", "Career", "Productivity"];
+
+  const [notes, setNotes] = useState<Note[]>([
     {
       id: 1,
-      title: 'Note 1',
-      content: 'This is the content of note 1.',
-      category: 'Category 1',
-      tags: ['tag1', 'tag2'],
-      date: '2024-09-16',
+      title: 'Deep Dive into React Hooks',
+      content: 'Exploring the intricacies of concurrent rendering features, state batching mechanics under the hood, and practical optimization paradigms.',
+      category: 'React',
+      tags: ['frontend', 'hooks'],
+      date: '2026-07-16',
       favorite: false,
+      coverImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=300&auto=format&fit=crop&q=60'
     },
     {
       id: 2,
-      title: 'Note 2',
-      content: 'This is the content of note 2.',
-      category: 'Category 2',
-      tags: ['tag3', 'tag4'],
-      date: '2024-09-15',
+      title: 'Architecting Large Language Models',
+      content: 'A comprehensive study on contextual token window strategies, embeddings pipeline configurations, and fine-tuning weights.',
+      category: 'AI',
+      tags: ['llm', 'ai'],
+      date: '2026-07-15',
       favorite: true,
+      coverImage: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?w=300&auto=format&fit=crop&q=60'
     },
     {
       id: 3,
-      title: 'Note 3',
-      content: 'This is the content of note 3.',
-      category: 'Category 3',
-      tags: ['tag5', 'tag6'],
-      date: '2024-09-14',
+      title: 'Advanced TypeScript Systems',
+      content: 'Mastering conditional utility types, mapped types parameters, inference signatures, and strict structural typing rulesets.',
+      category: 'TypeScript',
+      tags: ['types', 'backend'],
+      date: '2026-07-14',
       favorite: false,
+      coverImage: 'https://images.unsplash.com/photo-1516116211223-5c359a36298a?w=300&auto=format&fit=crop&q=60'
     },
   ]);
 
-  // Toggle favorite state handler
-  const toggleFavorite = (id:Number) => {
-    setNotes(prevNotes => 
-      prevNotes.map(note => 
-        note.id === id ? { ...note, favorite: !note.favorite } : note
-      )
-    );
+  const toggleFavorite = (id: number) => {
+    setNotes(prevNotes => prevNotes.map(note => note.id === id ? { ...note, favorite: !note.favorite } : note));
+  };
+
+  const handleDelete = (id: number) => {
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
+    }
+  };
+
+  const handleEdit = (id: number) => {
+    navigate(`/edit-note/${id}`);
   };
 
   const filteredNotes = notes.filter((note) => {
-    const titleMatches = note.title.toLowerCase().includes(search.toLowerCase());
+    const titleMatches = note.title.toLowerCase().includes(search.toLowerCase()) ||
+                         note.content.toLowerCase().includes(search.toLowerCase());
     const categoryMatches = category === 'All' || note.category === category;
     return titleMatches && categoryMatches;
   });
 
   const sortedNotes = [...filteredNotes].sort((a, b) => {
-    if (sort === 'Latest') {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    } else if (sort === 'Oldest') {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    } else {
-      return a.title.localeCompare(b.title);
-    }
+    if (sort === 'Latest') return new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (sort === 'Oldest') return new Date(a.date).getTime() - new Date(b.date).getTime();
+    return a.title.localeCompare(b.title);
   });
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto transition-colors duration-200">
+    <div className="p-4 space-y-4 max-w-7xl mx-auto transition-colors duration-200">
       {/* Header Panel */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-colors">
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">My Notes</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Your personal notes, powered by NotePilot AI.</p>
+          <h1 className="text-lg font-bold text-slate-900 dark:text-white">My Notes</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Your personal workspace.</p>
         </div>
         <button 
-          onClick={() => navigate('/dashboard/create-note')}
-          className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:opacity-95 text-white font-medium py-2.5 px-4 rounded-xl shadow transition w-full sm:w-auto justify-center"
+          onClick={() => navigate('/create-note')}
+          className="flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-purple-500 hover:opacity-95 text-white font-medium py-1.5 px-3 rounded-lg shadow-sm text-xs transition w-full sm:w-auto justify-center"
         >
-          <Plus size={18} />
+          <Plus size={14} />
           Create Note
         </button>
       </div>
 
-      {/* Unified Search & Actions Toolbar */}
-      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
-        {/* Search Input Box */}
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />
+      {/* Toolbar */}
+      <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-2.5 items-center justify-between">
+        <div className="relative w-full md:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search notes..."
-            className="w-full pl-10 pr-4 py-2 text-sm bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+            className="w-full pl-8 pr-3 py-1 text-xs bg-transparent text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
-        {/* Filters and Layout Actions */}
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-          {/* Category Selector */}
-          <div className="relative min-w-[140px] w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-between md:justify-end">
+          <div className="flex items-center gap-1">
+            <RiFolderOpenLine className="w-3 h-3 text-slate-400" />
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full appearance-none bg-slate-50 dark:bg-slate-800/60 pl-3 pr-10 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors"
+              className="px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200"
             >
-              <option value="All">All Categories</option>
-              <option value="Category 1">Category 1</option>
-              <option value="Category 2">Category 2</option>
-              <option value="Category 3">Category 3</option>
+              {categoriesList.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 pointer-events-none" />
           </div>
 
-          {/* Sort Selector */}
-          <div className="relative min-w-[130px] w-full sm:w-auto">
+          <div className="flex items-center gap-1">
+            <SlidersHorizontal className="w-3 h-3 text-slate-400" />
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="w-full appearance-none bg-slate-50 dark:bg-slate-800/60 pl-3 pr-10 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors"
+              className="px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200"
             >
               <option value="Latest">Latest</option>
               <option value="Oldest">Oldest</option>
-              <option value="Alphabetical">Alphabetical</option>
+              <option value="A-Z">A-Z</option>
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 pointer-events-none" />
           </div>
 
-          {/* View Toggler Button */}
-          <button
-            onClick={() => setView(view === 'grid' ? 'list' : 'grid')}
-            className="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 transition w-full sm:w-auto flex justify-center items-center"
-            title={view === 'grid' ? 'Switch to List View' : 'Switch to Grid View'}
-          >
-            {view === 'grid' ? <List size={18} /> : <Grid size={18} />}
-          </button>
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg">
+            <button onClick={() => setView('grid')} className={`p-1 rounded-md ${view === 'grid' ? 'bg-white dark:bg-slate-700 text-blue-500 shadow-xs' : 'text-slate-400'}`}><Grid size={12} /></button>
+            <button onClick={() => setView('list')} className={`p-1 rounded-md ${view === 'list' ? 'bg-white dark:bg-slate-700 text-blue-500 shadow-xs' : 'text-slate-400'}`}><List size={12} /></button>
+          </div>
         </div>
       </div>
 
-      {/* Main Content Layout Container */}
+      {/* Cards Layout Grid */}
       {sortedNotes.length === 0 ? (
-        <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm transition-colors">
-          <FileText className="mx-auto text-slate-300 dark:text-slate-700 mb-3" size={40} />
-          <p className="text-slate-500 dark:text-slate-400 font-medium">No notes match your filter setup.</p>
+        <div className="text-center py-8 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800/80">
+          <p className="text-xs text-slate-500">No notes found.</p>
         </div>
       ) : (
-        <div className={view === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}>
+        <div className={view === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" : "flex flex-col gap-2"}>
           {sortedNotes.map((note) => (
             <div 
               key={note.id} 
-              className={`bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm hover:shadow-md dark:hover:border-slate-700/80 transition duration-200 flex flex-col justify-between ${
-                view === 'list' ? 'md:flex-row md:items-center gap-4' : 'h-64'
+              className={`bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs hover:shadow-sm transition flex flex-col overflow-hidden ${
+                view === 'list' ? 'flex-row items-center p-3 gap-3 h-20' : 'h-[250px]'
               }`}
             >
-              <div className="flex-1 min-w-0 space-y-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white truncate">{note.title}</h3>
-                    <span className="inline-block shrink-0 px-2.5 py-0.5 text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-full">
+              {/* Cover Image */}
+              {note.coverImage && (
+                <div className={`${view === 'list' ? 'w-16 h-14 rounded-lg' : 'w-full h-24'} shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-850`}>
+                  <img src={note.coverImage} alt={note.title} className="w-full h-full object-cover" />
+                </div>
+              )}
+
+              {/* Text Layout Element */}
+              <div className="flex-1 min-w-0 p-3 flex flex-col justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-start justify-between gap-1">
+                    <h3 className="text-xs font-bold text-slate-900 dark:text-white truncate flex-1">{note.title}</h3>
+                  </div>
+
+                  <p className="text-slate-700 dark:text-slate-200 text-[11px] leading-normal line-clamp-2">
+                    {note.content}
+                  </p>
+                </div>
+
+                <div className="space-y-2 pt-1">
+                  {/* Category and Quick Actions Row */}
+                  <div className="flex items-center justify-between">
+                    <span className="inline-block px-1.5 py-0.5 text-[9px] font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-sm">
                       {note.category}
                     </span>
+                    
+                    {/* Inline Edit / Delete Actions */}
+                    <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
+                      <button 
+                        onClick={() => handleEdit(note.id)}
+                        title="Edit Note"
+                        className="hover:text-blue-500 dark:hover:text-blue-400 p-0.5 rounded transition"
+                      >
+                        <Pencil size={12} />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(note.id)}
+                        title="Delete Note"
+                        className="hover:text-red-500 dark:hover:text-red-400 p-0.5 rounded transition"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
                   </div>
-                  <button className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 shrink-0 p-0.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-                    <MoreVertical size={18} />
-                  </button>
-                </div>
 
-                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed line-clamp-2 md:line-clamp-3">
-                  {note.content}
-                </p>
-
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {note.tags.map((tag, i) => (
-                    <span key={i} className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-md">
-                      #{tag}
-                    </span>
-                  ))}
+                  {/* Card Bottom Strip */}
+                  <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800/60 pt-1.5 shrink-0">
+                    <span className="text-[9px] text-slate-400 font-medium">{note.date}</span>
+                    <button onClick={() => toggleFavorite(note.id)} className="focus:outline-none p-0.5">
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Bottom Card Row info / Right Column Info in List View */}
-              <div className={`flex items-center justify-between border-t border-slate-50 dark:border-slate-800/60 pt-3 mt-2 shrink-0 ${
-                view === 'list' ? 'md:border-t-0 md:pt-0 md:mt-0 md:flex-col md:items-end md:justify-center md:gap-2 md:min-w-[120px]' : ''
-              }`}>
-                <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">{note.date}</span>
-                <button 
-                  onClick={() => toggleFavorite(note.id)}
-                  className="focus:outline-none p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
-                >
-                  <Star 
-                    size={18} 
-                    className={note.favorite ? "text-yellow-400 fill-yellow-400" : "text-slate-300 dark:text-slate-600 hover:text-slate-400 dark:hover:text-slate-500"} 
-                  />
-                </button>
-              </div>
             </div>
           ))}
         </div>
