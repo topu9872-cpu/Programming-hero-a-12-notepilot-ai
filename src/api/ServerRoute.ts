@@ -37,6 +37,51 @@ export const getAllNotes = async ({
   return res.json();
 };
 
+export interface MyNotesRequestOptions {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sort?: string;
+}
+
+export interface MyNotesResponse {
+  notes: Note[];
+  totalNotes: number;
+  currentPage: number;
+  totalPages: number;
+}
+
+export const getMyNotes = async (
+  userId: string,
+  {
+    page = 1,
+    limit = 8,
+    search = "",
+    sort = "newest",
+  }: MyNotesRequestOptions = {},
+): Promise<MyNotesResponse> => {
+  const url = new URL(`${API}/my-notes/${encodeURIComponent(userId)}`);
+
+  url.searchParams.append("page", String(page));
+  url.searchParams.append("limit", String(limit));
+
+  if (search.trim()) {
+    url.searchParams.append("search", search.trim());
+  }
+
+  if (sort) {
+    url.searchParams.append("sort", sort);
+  }
+
+  const res = await fetch(url.toString());
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch user notes: ${res.status}`);
+  }
+
+  return res.json();
+};
+
 export const getAllNotesDetails = async (id: string) => {
   // Adding cache: 'no-store' instructs the browser to bypass its cache
   // and fetch fresh data from the server every single time.
