@@ -4,7 +4,10 @@
   "version": "0.0.0",
   "type": "module",
 "scripts": {
-  "start": "tsx backend/server/index.ts"
+  "start": "tsx backend/server/index.ts",
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview"
 },
   "dependencies": {
     "@google/genai": "^2.12.0",
