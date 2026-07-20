@@ -33,7 +33,7 @@ export async function getAuth(): Promise<AuthClient> {
         baseURL: process.env.BETTER_AUTH_URL,
         secret,
         database: mongodbAdapter(db, {
-          client,
+          // client,
         }),
         plugins: [
           jwt(),
