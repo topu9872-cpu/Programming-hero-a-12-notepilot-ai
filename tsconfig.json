@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "composite": false, 
+   
     "outDir": "./dist",
     "declaration": false, 
     "skipLibCheck": true,
