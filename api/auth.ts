@@ -4,7 +4,8 @@ import { betterAuth } from "better-auth";
 import type { BetterAuthOptions } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { jwt } from "better-auth/plugins";
-import { getDb } from "./db";
+import { getDb } from "./db.js";
+
 
 const isProduction = process.env.NODE_ENV === "production";
 
