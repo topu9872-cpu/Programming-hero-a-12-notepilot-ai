@@ -3,9 +3,9 @@ import express from "express";
 import cors from "cors";
 import { MongoClient, Filter, Sort, ObjectId } from "mongodb";
 import { toNodeHandler } from "better-auth/node";
+import { getAuth } from "../backend/auth";
+import { ai } from "../backend/ai/gemini";
 
-import { getAuth } from "../auth";
-import { ai } from "../ai/gemini";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -351,15 +351,11 @@ ${content}
         });
       }
     });
-
-
-
   } catch (error) {
     console.error("❌ Failed to connect to MongoDB:", error);
     process.exit(1);
   }
 }
-
 
 startServer();
 

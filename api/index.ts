@@ -1,3 +1,4 @@
-import app from "../backend/server/index.ts";
+import app from "./server";
+
 
 export default app;
