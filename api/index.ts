@@ -4,7 +4,7 @@ import express from "express";
 import cors from "cors";
 import { MongoClient, Filter, Sort, ObjectId } from "mongodb";
 import { toNodeHandler } from "better-auth/node";
-import { ai } from "./ai/gemini";
+import { ai } from "./ai/gemini.js";
 import { getAuth } from "./auth";
 
 const app = express();
