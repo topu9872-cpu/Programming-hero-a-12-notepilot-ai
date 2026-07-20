@@ -358,5 +358,4 @@ ${content}
   }
 }
 
-
 export default app;
