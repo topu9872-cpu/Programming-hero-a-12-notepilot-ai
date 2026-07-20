@@ -42,14 +42,13 @@ export async function getAuth(): Promise<AuthClient> {
           enabled: true,
         },
        trustedOrigins: [
-  process.env.CLIENT_URL!,
+  "https://programming-hero-a-12-notepilot-ai.vercel.app",
   "http://localhost:5173",
 ],
         socialProviders: {
           google: {
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            // ❌ Removed 'redirectURL' from here
           },
         },
         advanced: {
