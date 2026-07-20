@@ -3,9 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-  "build": "tsc",
-  "start": "node api/index.js"
+ "scripts": {
+  "dev": "vite",
+  "build": "vite build && tsc --project api/ai/tsconfig.api.json",
+  "start": "node dist/api/index.js"
 },
   "dependencies": {
     "@google/genai": "^2.12.0",
