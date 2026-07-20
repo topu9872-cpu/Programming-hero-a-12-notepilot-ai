@@ -7,12 +7,18 @@ import { toNodeHandler } from "better-auth/node";
 import { getAuth } from "../auth";
 import { ai } from "../ai/gemini";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 
 app.set("trust proxy", true);
 app.use(
   cors({
-    origin: process.env.VITE_APP_URL,
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
 );
@@ -23,7 +29,6 @@ app.use("/api/auth", async (req, res) => {
   return toNodeHandler(auth)(req, res);
 });
 
-// 🔌 মঙ্গোডিবি কানেকশন এবং সার্ভার স্টার্ট লজিক
 const client = new MongoClient(process.env.MONGODB_URI as string);
 
 interface Note {
@@ -52,7 +57,6 @@ const AllNotesCollection = db.collection<Note>("All_Notes");
 const FavoritedCollection = db.collection<Note>("Favorited");
 async function startServer() {
   try {
-    // ১. ডাটাবেজের সাথে কানেক্ট করুন
     await client.connect();
 
     app.get("/all-notes", async (req, res) => {
@@ -205,30 +209,6 @@ async function startServer() {
         featured: { featured: -1 },
       };
 
-      app.patch("/all-notes/:id", async (req, res) => {
-        const { id } = req.params;
-        const body = req.body;
-
-        const result = await AllNotesCollection.updateOne(
-          { _id: new ObjectId(id) } as any,
-          {
-            $set: body,
-          },
-        );
-
-        res.json(result);
-      });
-
-      app.delete("/delete-student-notes/:id", async (req, res) => {
-        const { id } = req.params;
-
-        const result = await AllNotesCollection.deleteOne({
-          _id: new ObjectId(id),
-        } as any);
-
-        res.json(result);
-      });
-
       const sortCriteria = sortMap[sortParam] || { createdAt: -1 };
 
       // 4. Run accurate pagination metrics scoped to this specific user
@@ -248,6 +228,30 @@ async function startServer() {
         currentPage,
         totalPages,
       });
+    });
+
+    app.patch("/all-notes/:id", async (req, res) => {
+      const { id } = req.params;
+      const body = req.body;
+
+      const result = await AllNotesCollection.updateOne(
+        { _id: new ObjectId(id) } as any,
+        {
+          $set: body,
+        },
+      );
+
+      res.json(result);
+    });
+
+    app.delete("/delete-student-notes/:id", async (req, res) => {
+      const { id } = req.params;
+
+      const result = await AllNotesCollection.deleteOne({
+        _id: new ObjectId(id),
+      } as any);
+
+      res.json(result);
     });
 
     app.post("/api/ai/summary", async (req, res) => {
@@ -348,9 +352,23 @@ ${content}
       }
     });
 
-    app.listen(3000, () => {
-      console.log("🚀 Server running on http://localhost:3000");
-    });
+    app.use(
+  express.static(
+    path.join(__dirname, "../../dist")
+  )
+);
+
+app.get("*", (_, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../dist/index.html")
+  );
+});
+
+    const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
   } catch (error) {
     console.error("❌ Failed to connect to MongoDB:", error);
     process.exit(1);

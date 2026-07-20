@@ -30,7 +30,7 @@ export async function getAuth(): Promise<AuthClient> {
       const db = await getDb();
 
       const authConfig = {
-        baseURL: "http://localhost:3000",
+        baseURL: process.env.BETTER_AUTH_URL,
         secret,
         database: mongodbAdapter(db, {
           client,
@@ -41,9 +41,10 @@ export async function getAuth(): Promise<AuthClient> {
         emailAndPassword: {
           enabled: true,
         },
-        trustedOrigins: [
-          "http://localhost:5173",
-        ],
+       trustedOrigins: [
+  process.env.CLIENT_URL!,
+  "http://localhost:5173",
+],
         socialProviders: {
           google: {
             clientId: process.env.GOOGLE_CLIENT_ID as string,

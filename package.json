@@ -3,14 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev:frontend": "vite",
-    "dev:backend": "tsx --env-file=.env backend/server/index.ts",
-    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+ "scripts": {
+  "dev": "concurrently \"vite\" \"tsx --env-file=.env backend/server/index.ts\"",
+  "build": "tsc -b && vite build",
+  "start": "tsx --env-file=.env backend/server/index.ts"
+},
   "dependencies": {
     "@google/genai": "^2.12.0",
     "@hookform/resolvers": "^5.4.0",
