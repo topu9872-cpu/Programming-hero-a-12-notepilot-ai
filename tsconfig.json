@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "composite": true,
+    "composite": false, 
+    "outDir": "./dist",
+    "declaration": false, 
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -10,9 +12,8 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "vite.config.ts",
     "src/**/*",
-    "api/**/*",
-    "backend/**/*"
-  ]
+    "api/**/*"
+  ],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
 }

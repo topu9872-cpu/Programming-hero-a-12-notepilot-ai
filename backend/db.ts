@@ -6,6 +6,7 @@ if (!uri) {
   throw new Error("Please add your MONGODB_URI to your .env file");
 }
 
+// ডেভেলপমেন্ট মোডে কানেকশন ক্যাশ করার জন্য গ্লোবাল ভেরিয়েবল
 declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
@@ -16,22 +17,16 @@ if (process.env.NODE_ENV === "production") {
   const client = new MongoClient(uri);
   clientPromise = client.connect();
 } else {
+  // ডেভেলপমেন্টে হট রিলোডের সময় বারবার কানেক্ট হওয়া আটকানো
   if (!global._mongoClientPromise) {
     const client = new MongoClient(uri);
     global._mongoClientPromise = client.connect();
   }
-
   clientPromise = global._mongoClientPromise;
 }
 
 
-export async function getMongoClient() {
-  return await clientPromise;
-}
-
-
 export async function getDb(): Promise<Db> {
-  const client = await getMongoClient();
-
+  const client = await clientPromise;
   return client.db("NotePilot");
 }
