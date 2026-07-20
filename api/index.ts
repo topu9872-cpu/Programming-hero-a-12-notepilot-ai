@@ -15,7 +15,7 @@ const app = express();
 app.set("trust proxy", true);
 app.use(
   cors({
-    origin: "http://localhost:5173", // স্পষ্টভাবে আপনার ফ্রন্টএন্ড ইউআরএল দিন
+    origin: "https://programming-hero-a-12-notepilot-ai.vercel.app", // স্পষ্টভাবে আপনার ফ্রন্টএন্ড ইউআরএল দিন
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // সব মেথড এলাউ করুন
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -352,19 +352,17 @@ ${content}
         });
       }
     });
-    
+
     app.get('/api', (req, res) => {
   res.json({ message: "Hello! The backend is working." });
 });
 
-    app.listen(3000, () => {
-      console.log("🚀 Server running on http://localhost:3000");
-    });
+
   } catch (error) {
     console.error("❌ Failed to connect to MongoDB:", error);
     process.exit(1);
   }
 }
 
-startServer();
-// export default app;
+// startServer();
+export default app;

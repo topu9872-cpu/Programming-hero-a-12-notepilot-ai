@@ -43,7 +43,7 @@ export async function getAuth(): Promise<AuthClient> {
         },
        trustedOrigins: [
   "https://programming-hero-a-12-notepilot-ai.vercel.app",
-  "http://localhost:5173",
+ 
 ],
         socialProviders: {
           google: {

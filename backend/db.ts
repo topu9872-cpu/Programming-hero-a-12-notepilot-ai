@@ -6,7 +6,6 @@ if (!uri) {
   throw new Error("Please add your MONGODB_URI to your .env file");
 }
 
-// ডেভেলপমেন্ট মোডে কানেকশন ক্যাশ করার জন্য গ্লোবাল ভেরিয়েবল
 declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
