@@ -1,14 +1,11 @@
 import express from "express";
 import cors from "cors";
-import { MongoClient, Filter, Sort, ObjectId, Db } from "mongodb";
 import { toNodeHandler } from "better-auth/node";
-import { getAuth } from "../backend/auth";
-import { ai } from "../backend/ai/gemini";
-import path from "path";
-import { fileURLToPath } from "url";
+import { getAuth } from "../backend/auth.js";
+import { ai } from "../backend/ai/gemini.js";
+import { MongoClient, ObjectId } from "mongodb";
+import type { Filter, Sort, Db } from "mongodb";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -41,7 +38,7 @@ async function connectDB() {
 }
 
 // Middleware to ensure DB connection
-app.use(async (req, res, next) => {
+app.use(async (_req, res, next) => {
   try {
     await connectDB();
     next();
