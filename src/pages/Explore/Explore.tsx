@@ -54,15 +54,6 @@ interface Note {
   publishedAt?: string;
 }
 
-interface Creator {
-  id: string;
-  name: string;
-  bio: string;
-  avatar: string;
-  followers: number;
-  category: string;
-}
-
 // Fallback category helper to map dynamic collection data safely
 const getIconForCategory = (category: string) => {
   switch (category?.toLowerCase()) {
@@ -95,14 +86,15 @@ export default function Explore() {
   ];
 
   // ==========================================
-  // MEMOIZED FILTER LOGIC & UNIQUE CATEGORIES
+  // MEMOIZED FILTER LOGIC (Case-insensitive Fix)
   // ==========================================
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
-      const matchesCategory = selectedCategory
-        ? note.category === selectedCategory
-        : true;
-      return matchesCategory;
+      if (!selectedCategory) return true;
+      return (
+        note.category?.trim().toLowerCase() ===
+        selectedCategory.trim().toLowerCase()
+      );
     });
   }, [selectedCategory, notes]);
 
@@ -110,6 +102,7 @@ export default function Explore() {
     const pageParam = Number(searchParams.get("page") || "1");
     const sortParam = (searchParams.get("sort") || "all") as SortOption;
     const searchParam = searchParams.get("search") || "";
+    const categoryParam = searchParams.get("category");
 
     setCurrentPage(Number.isNaN(pageParam) ? 1 : Math.max(1, pageParam));
     setSortOption(
@@ -118,6 +111,7 @@ export default function Explore() {
         : "newest",
     );
     setSearchQuery(searchParam);
+    setSelectedCategory(categoryParam ? categoryParam : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -125,9 +119,10 @@ export default function Explore() {
     const params = new URLSearchParams();
     if (searchQuery) params.set("search", searchQuery);
     if (sortOption) params.set("sort", sortOption);
+    if (selectedCategory) params.set("category", selectedCategory);
     if (currentPage > 1) params.set("page", String(currentPage));
     setSearchParams(params, { replace: true });
-  }, [searchQuery, sortOption, currentPage, setSearchParams]);
+  }, [searchQuery, sortOption, selectedCategory, currentPage, setSearchParams]);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -137,20 +132,24 @@ export default function Explore() {
           limit: 8,
           search: searchQuery,
           sort: sortOption,
+          
         });
 
         if (data?.notes) {
           setNotes(data.notes);
           setTotalPages(data.totalPages || 1);
           setCurrentPage(data.currentPage || 1);
+        } else if (Array.isArray(data)) {
+          // ব্যাকএন্ড থেকে যদি সরাসরি অ্যারে আসে তার ব্যাকআপ হ্যান্ডলিং
+          setNotes(data);
         }
       } catch (error) {
-        console.error(error);
+        console.error("Failed to fetch notes:", error);
       }
     };
 
     fetchNotes();
-  }, [currentPage, searchQuery, sortOption]);
+  }, [currentPage, searchQuery, sortOption, selectedCategory]);
 
   // Dynamically group unique categories from MongoDB records
   const uniqueCategories = useMemo(() => {
@@ -168,11 +167,6 @@ export default function Explore() {
     }));
   }, [notes]);
 
-  useEffect(() => {
-    getAllNotes().then((data) => {
-      if (Array.isArray(data)) setNotes(data);
-    });
-  }, []);
   return (
     <div className="min-h-screen bg-amber-50/20 dark:bg-zinc-950 text-slate-900 dark:text-zinc-50 transition-colors duration-300 antialiased selection:bg-indigo-200">
       {/* AMBIENT SOFT FRIENDLY GLOWS */}
@@ -262,7 +256,10 @@ export default function Explore() {
           {/* FILTER CHIPS */}
           <div className="flex flex-wrap justify-center gap-2 pt-3">
             <button
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => {
+                setSelectedCategory(null);
+                setCurrentPage(1);
+              }}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 border shadow-sm ${
                 selectedCategory === null
                   ? "bg-indigo-600 border-indigo-600 text-white dark:bg-zinc-50 dark:text-zinc-950 dark:border-zinc-50 scale-102"
@@ -272,11 +269,15 @@ export default function Explore() {
               All Logs
             </button>
             {uniqueCategories.map((cat) => {
-              const isActive = selectedCategory === cat.name;
+              const isActive =
+                selectedCategory?.toLowerCase() === cat.name.toLowerCase();
               return (
                 <button
                   key={cat.name}
-                  onClick={() => setSelectedCategory(cat.name)}
+                  onClick={() => {
+                    setSelectedCategory(cat.name);
+                    setCurrentPage(1);
+                  }}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 border shadow-sm ${
                     isActive
                       ? "bg-indigo-600 border-indigo-600 text-white dark:bg-zinc-50 dark:text-zinc-950 dark:border-zinc-50 scale-102"

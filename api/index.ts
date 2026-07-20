@@ -350,7 +350,7 @@ ${content}
       }
     });
 
-    app.get("/api", (req, res) => {
+    app.get("/api", (_req, res) => {
       res.json({ message: "Hello! The backend is working." });
     });
   } catch (error) {

@@ -7,6 +7,7 @@ export interface NotesRequestOptions {
   limit?: number;
   search?: string;
   sort?: string;
+  category?: string; // ক্যাটাগরি অপশনাল প্রপার্টি হিসেবে যোগ করা হলো
 }
 
 export const getAllNotes = async ({
@@ -14,6 +15,7 @@ export const getAllNotes = async ({
   limit = 8,
   search = "",
   sort = "newest",
+  category, 
 }: NotesRequestOptions = {}) => {
   const url = new URL(`${API}/all-notes`);
 
@@ -26,6 +28,11 @@ export const getAllNotes = async ({
 
   if (sort) {
     url.searchParams.append("sort", sort);
+  }
+
+  
+  if (category && category.trim()) {
+    url.searchParams.append("category", category.trim());
   }
 
   const res = await fetch(url.toString());
