@@ -1,15 +1,11 @@
-
-import 'dotenv/config';
+import "dotenv/config";
 import express from "express";
 
 import cors from "cors";
 import { MongoClient, Filter, Sort, ObjectId } from "mongodb";
 import { toNodeHandler } from "better-auth/node";
 import { ai } from "./ai/gemini";
-import { getAuth } from './backend/auth';
-
-
-
+import { getAuth } from "./auth";
 
 const app = express();
 
@@ -20,7 +16,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // সব মেথড এলাউ করুন
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 app.use(express.json());
 
@@ -353,11 +349,9 @@ ${content}
       }
     });
 
-    app.get('/api', (req, res) => {
-  res.json({ message: "Hello! The backend is working." });
-});
-
-
+    app.get("/api", (req, res) => {
+      res.json({ message: "Hello! The backend is working." });
+    });
   } catch (error) {
     console.error("❌ Failed to connect to MongoDB:", error);
     process.exit(1);

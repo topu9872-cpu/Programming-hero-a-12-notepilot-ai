@@ -1,4 +1,3 @@
-
 /// <reference types="node" />
 
 import { betterAuth } from "better-auth";
@@ -6,8 +5,6 @@ import type { BetterAuthOptions } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { jwt } from "better-auth/plugins";
 import { getDb } from "./db";
-
-
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -27,7 +24,6 @@ export async function getAuth(): Promise<AuthClient> {
         throw new Error("BETTER_AUTH_SECRET is not configured.");
       }
 
-   
       const db = await getDb();
 
       const authConfig = {
@@ -36,16 +32,13 @@ export async function getAuth(): Promise<AuthClient> {
         database: mongodbAdapter(db, {
           // client,
         }),
-        plugins: [
-          jwt(),
-        ],
+        plugins: [jwt()],
         emailAndPassword: {
           enabled: true,
         },
-       trustedOrigins: [
-  "https://programming-hero-a-12-notepilot-ai.vercel.app",
- 
-],
+        trustedOrigins: [
+          "https://programming-hero-a-12-notepilot-ai.vercel.app",
+        ],
         socialProviders: {
           google: {
             clientId: process.env.GOOGLE_CLIENT_ID as string,
