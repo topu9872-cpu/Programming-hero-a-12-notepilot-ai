@@ -5,8 +5,8 @@ import express from "express";
 import cors from "cors";
 import { MongoClient, Filter, Sort, ObjectId } from "mongodb";
 import { toNodeHandler } from "better-auth/node";
-import { ai } from "../backend/ai/gemini";
-import { getAuth } from "../backend/auth";
+import { ai } from "./backend/ai/gemini";
+import { getAuth } from "./backend/auth";
 
 
 
