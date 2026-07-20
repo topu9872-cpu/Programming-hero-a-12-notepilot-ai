@@ -51,12 +51,13 @@ const db = client.db("NotePilot");
 
 const AllNotesCollection = db.collection<Note>("All_Notes");
 const FavoritedCollection = db.collection<Note>("Favorited");
+let isConnected = false;
 async function startServer() {
   try {
     // ১. ডাটাবেজের সাথে কানেক্ট করুন
     await client.connect();
-
     app.get("/all-notes", async (req, res) => {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
       const query = req.query as NotesQuery;
       const requestedPage = Math.max(1, Number(query.page ?? 1));
       const requestedLimit = Math.min(
@@ -357,5 +358,6 @@ ${content}
     process.exit(1);
   }
 }
+startServer();
 
 export default app;
