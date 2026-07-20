@@ -47,7 +47,7 @@ interface NoteSchemaData {
   updatedAt: string;
   publishedAt: string;
   views: number;
-  relatedNotes: string[];
+
   author: NoteAuthor | null;
 }
 
@@ -68,7 +68,7 @@ const emptyFormState: NoteSchemaData = {
   updatedAt: new Date().toISOString().split("T")[0],
   publishedAt: "",
   views: 0,
-  relatedNotes: [],
+ 
   author: null,
 };
 
@@ -92,7 +92,7 @@ export default function CreateNote() {
     updatedAt: new Date().toISOString().split("T")[0],
     publishedAt: "",
     views: 0,
-    relatedNotes: [],
+    
     author: null,
   });
 
@@ -210,6 +210,14 @@ export default function CreateNote() {
       };
 
       try {
+        if (
+          !body.content?.trim() ||
+          !body.title?.trim() ||
+          !body.description.trim()
+        ) {
+          toast.warning("Input is required");
+          return;
+        }
         const data = await notePost(body as any);
         if (data.acknowledged) {
           toast.success("Note created successfully!");

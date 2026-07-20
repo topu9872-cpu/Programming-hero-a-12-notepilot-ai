@@ -17,7 +17,7 @@ import { ImageBBUpload } from "../lib/ImageBBUpload";
 import { toast } from "sonner";
 import { DeleteConfirmModal } from "../ui/DeleteConfirmModal";
 
-interface Note {
+export interface Note {
   id: string;
   title: string;
   description?: string;
@@ -29,11 +29,14 @@ interface Note {
   coverImage?: string;
   createdAt?: string;
   updatedAt?: string;
+  publishedAt?:string;
+  readTime?:string
   author?: {
     name: string;
     avatar: string;
     bio?: string;
     isVerified?: boolean;
+
   };
   featured?: boolean;
   aiGenerated?: boolean;
@@ -66,6 +69,7 @@ interface RawNoteData {
   publishedAt?: string;
   date?: string;
   coverImage?: string;
+   readTime?:string
   author?: {
     name?: string;
     avatar?: string;
@@ -149,6 +153,7 @@ const MyNotes = () => {
             id: String(note._id || note.id || ""),
             title: String(note.title || "Untitled note"),
             description: String(note.description || ""),
+readTime: note?.readTime || '',
             content: String(note.content || note.description || ""),
             category: String(note.category || "Uncategorized"),
             tags: Array.isArray(note.tags) ? note.tags.map(String) : [],
@@ -173,29 +178,7 @@ const MyNotes = () => {
     fetchNotes();
   }, [user?.id, page, debouncedSearch, sort]);
 
-  const toggleFavorite = async (id: string) => {
-    const noteToUpdate = notes.find((n) => n.id === id);
-    if (!noteToUpdate) return;
-
-    const newFavoriteStatus = !noteToUpdate.favorite;
-
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === id ? { ...note, favorite: newFavoriteStatus } : note,
-      ),
-    );
-
-    try {
-      // Optional: await updateNote(id, { favorite: newFavoriteStatus });
-    } catch (error) {
-      toast.error("Failed to update favorite status.");
-      setNotes((prevNotes) =>
-        prevNotes.map((note) =>
-          note.id === id ? { ...note, favorite: !newFavoriteStatus } : note,
-        ),
-      );
-    }
-  };
+ 
 
   const executeDelete = async () => {
     if (!activeDeleteTarget) return;
@@ -522,13 +505,7 @@ const MyNotes = () => {
                         {note.date}
                       </span>
 
-                      <button
-                        onClick={() => toggleFavorite(note.id)}
-                        className={`focus:outline-none p-0.5 transition ${note.favorite ? "text-red-500" : "text-slate-400 hover:text-red-400"}`}
-                        title={note.favorite ? "Unfavorite" : "Favorite"}
-                      >
-                        <Heart size={12} fill={note.favorite ? "currentColor" : "none"} />
-                      </button>
+                     
                     </div>
                   </div>
                 </div>

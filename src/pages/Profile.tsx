@@ -236,27 +236,7 @@ export default function ProfilePage(): React.JSX.Element {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-flow-col sm:auto-cols-max">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900"
-              onClick={() => toast("Profile is synced with Better Auth.")}
-            >
-              <RiArrowRightLine className="h-4 w-4" /> Refresh
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/10 transition hover:brightness-105"
-              onClick={() =>
-                window.scrollTo({
-                  top: document.body.scrollHeight,
-                  behavior: "smooth",
-                })
-              }
-            >
-              Explore actions
-            </button>
-          </div>
+        
         </div>
       </motion.header>
 
@@ -297,7 +277,7 @@ export default function ProfilePage(): React.JSX.Element {
                         message: "Enter at least 3 characters.",
                       },
                     })}
-                    className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-indigo-400 dark:focus:ring-indigo-500/20"
+                    className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 dark:focus:border-indigo-400 dark:focus:ring-indigo-500/20"
                     placeholder="Enter your full name"
                   />
                   {errors.name && (
@@ -313,7 +293,7 @@ export default function ProfilePage(): React.JSX.Element {
                     type="file"
                     accept="image/*"
                     {...register("image")}
-                    className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-slate-800 dark:file:text-slate-200"
+                    className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-400 dark:file:bg-slate-800 dark:file:text-slate-200"
                   />
                 </label>
               </div>

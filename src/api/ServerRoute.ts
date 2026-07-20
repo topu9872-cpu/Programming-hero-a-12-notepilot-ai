@@ -51,6 +51,21 @@ export interface MyNotesResponse {
   totalPages: number;
 }
 
+export const getDashboardNotes = async (userId?: string) => {
+  const url = userId
+    ? `${API}/my-notes/${userId}`
+    : `${API}/my-notes`;
+
+  const res = await fetch(url);
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Something went wrong");
+  }
+
+  return result;
+};
+
 export const getMyNotes = async (
   userId: string,
   {
@@ -60,8 +75,10 @@ export const getMyNotes = async (
     sort = "newest",
   }: MyNotesRequestOptions = {},
 ): Promise<MyNotesResponse> => {
-  const url = new URL(`${API}/my-notes/${encodeURIComponent(userId)}`);
-
+  const url = new URL( userId
+    ? `${API}/my-notes/${encodeURIComponent(userId)}`
+    : `${API}/my-notes`);
+  
   url.searchParams.append("page", String(page));
   url.searchParams.append("limit", String(limit));
 
@@ -101,6 +118,7 @@ export const getAllNotesDetails = async (id: string) => {
 };
 
 export const Notesfavorited = async (data: {
+  isFavoritedData: Date;
   isFavorited: boolean;
   note: Note | null;
   user: any;
@@ -137,11 +155,9 @@ export const removeFavorite = async (noteId: string, userId: string) => {
   return res.json();
 };
 
-
-export const deleteNote = async ( id: string) => {
+export const deleteNote = async (id: string) => {
   const res = await fetch(`${API}/delete-student-notes/${id}`, {
     method: "DELETE",
-   
   });
 
   return res.json();
@@ -164,7 +180,6 @@ export const notePost = async (body: Note) => {
 
   return result;
 };
-
 export const updateNote = async (noteId: string, body: Partial<Note>) => {
   const res = await fetch(`${API}/all-notes/${encodeURIComponent(noteId)}`, {
     method: "PATCH",
@@ -192,17 +207,7 @@ export const getUsersFavorite = async (id: string) => {
   return res.json();
 };
 
-
-
-
-
-
-
-
-export const generateSummary = async (
-  title: string,
-  content: string
-) => {
+export const generateSummary = async (title: string, content: string) => {
   const res = await fetch(`${API}/api/ai/summary`, {
     method: "POST",
     headers: {
@@ -221,10 +226,7 @@ export const generateSummary = async (
   return res.json();
 };
 
-export const classifyNote = async (
-  title: string,
-  content: string
-) => {
+export const classifyNote = async (title: string, content: string) => {
   const res = await fetch(`${API}/api/ai/classify`, {
     method: "POST",
     headers: {

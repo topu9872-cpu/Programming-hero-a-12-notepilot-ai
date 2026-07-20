@@ -9,11 +9,11 @@ import { authClient } from "../lib/auth-client";
 import { getUsersFavorite, removeFavorite } from "../api/ServerRoute";
 
 interface Note {
-  _id: string; title: string; description: string; category: string;
+  _id: string; title: string;createdAt?: Date | string; description: string; category: string;
   coverImage?: string; coverGradient?: string; tags: string[];
   readTime: string; views: number; author?: { id?: string; name?: string; avatar?: string };
 }
-interface FavoriteDocument { _id: string; note: Note; user: { id: string; name?: string | null; email?: string | null } }
+export interface FavoriteDocument { _id: string; note: Note; user: { id: string; name?: string | null; email?: string | null } }
 
 const parseFavoriteDocument = (raw: any, user: any): FavoriteDocument | null => {
   const core = raw?.note || raw;

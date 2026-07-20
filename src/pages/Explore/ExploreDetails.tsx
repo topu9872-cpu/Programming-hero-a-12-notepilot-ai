@@ -35,6 +35,7 @@ export interface Note {
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
+  isFavoritedData:Date
 }
 
 export default function NoteDetails() {
@@ -55,7 +56,6 @@ useEffect(() => {
         return;
       }
 
-      // 🛡️ Bulletproof Normalization Layer
       const normalizedNote: Note = {
         ...rawData,
         // 1. Safeguard ID format conversions
@@ -113,6 +113,7 @@ useEffect(() => {
         toast.success("Removed from favorites");
       } else {
         await Notesfavorited({
+          isFavoritedData:new Date(),
           isFavorited: true,
           note,
           user,
