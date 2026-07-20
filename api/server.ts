@@ -358,4 +358,6 @@ ${content}
 }
 
 
+startServer();
+
 export default app;
