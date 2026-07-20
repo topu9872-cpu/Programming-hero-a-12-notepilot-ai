@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Moon, Sun, LogIn, LogOut, Sparkles } from 'lucide-react';
-import { authClient } from '../../lib/auth-client.js';
+import { authClient } from '../../lib/auth-client';
 
 interface NavLinkItem {
   label: string;

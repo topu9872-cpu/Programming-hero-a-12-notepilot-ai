@@ -1,11 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/api",
-    "rootDir": "..",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "outDir": "../../dist/api/ai", 
+    "rootDir": "../../",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "esModuleInterop": true
   },
-  "include": ["../**/*"]
+  "include": ["../../api/**/*", "../../src/**/*"],
+  "exclude": ["../../node_modules", "../../dist", "**/*.spec.ts"]
 }

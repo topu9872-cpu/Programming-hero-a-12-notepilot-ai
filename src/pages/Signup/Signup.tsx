@@ -12,7 +12,7 @@ import {
   Shield,
   ArrowRight,
 } from "lucide-react";
-import { authClient } from "../../lib/auth-client.js";
+import { authClient } from "../../lib/auth-client";
 
 interface SignupFormData {
   name: string; // Synced with the input registration

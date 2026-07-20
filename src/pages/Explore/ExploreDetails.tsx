@@ -5,8 +5,8 @@ import {
   RiCalendarEventLine, RiHeartLine, RiBookmarkLine, RiUserLine, 
   RiFileList3Line
 } from 'react-icons/ri';
-import { getAllNotesDetails, Notesfavorited, removeFavorite } from '../../api/ServerRoute.js';
-import { authClient } from '../../lib/auth-client.js';
+import { getAllNotesDetails, Notesfavorited, removeFavorite } from '../../api/ServerRoute';
+import { authClient } from '../../lib/auth-client';
 import { toast } from 'sonner';
 
 export interface Note {

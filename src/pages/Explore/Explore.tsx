@@ -22,7 +22,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
-import { getAllNotes } from "../../api/ServerRoute.js";
+import { getAllNotes } from "../../api/ServerRoute";
 
 // ==========================================
 // INTERFACES & TYPES

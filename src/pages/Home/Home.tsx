@@ -1,9 +1,9 @@
 
-import HeroSection from '../../components/home/HeroSection.js';
-import FeaturesSection from '../../components/home/FeaturesSection.js';
-import StatsSection from '../../components/home/StatsSection.js';
-import HowItWorksSection from '../../components/home/HowItWorksSection.js';
-import AIDemoSection from '../../components/home/AIDemoSection.js';
+import HeroSection from '../../components/home/HeroSection';
+import FeaturesSection from '../../components/home/FeaturesSection';
+import StatsSection from '../../components/home/StatsSection';
+import HowItWorksSection from '../../components/home/HowItWorksSection';
+import AIDemoSection from '../../components/home/AIDemoSection';
 
 const  Home=() => {
   return (

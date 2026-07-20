@@ -16,14 +16,14 @@ import {
   RiHeartFill,
   RiRidingLine,
 } from "react-icons/ri";
-import { authClient } from "../lib/auth-client.js";
+import { authClient } from "../lib/auth-client";
 import { NavLink } from "react-router-dom";
 import {
   getDashboardNotes,
   getUsersFavorite,
-} from "../api/ServerRoute.js";
-import { Note } from "./MyNotes.js";
-import { FavoriteDocument } from "./Favorites.js";
+} from "../api/ServerRoute";
+import { Note } from "./MyNotes";
+import { FavoriteDocument } from "./Favorites";
 
 // Graph Metric Streams
 const KNOWLEDGE_VELOCITY_DATA = [

@@ -15,8 +15,8 @@ import {
   RiArrowRightLine,
   RiLockPasswordLine,
 } from "react-icons/ri";
-import { authClient } from "../lib/auth-client.js";
-import { ImageBBUpload } from "../lib/ImageBBUpload.js";
+import { authClient } from "../lib/auth-client";
+import { ImageBBUpload } from "../lib/ImageBBUpload";
 
 // Fixed form type to separate the file list input from the final uploaded string
 type ProfileFormValues = {
