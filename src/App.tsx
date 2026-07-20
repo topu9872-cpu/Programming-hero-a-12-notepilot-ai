@@ -2,7 +2,7 @@
 
 import './App.css'
 
-import AppRoutes from './routes/AppRoutes'
+import AppRoutes from './routes/AppRoutes.js'
 
 function App() {
 

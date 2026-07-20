@@ -11,11 +11,11 @@ import {
   Heart,
 } from "lucide-react";
 import { RiFolderOpenLine as FolderIcon } from "react-icons/ri"; 
-import { authClient } from "../lib/auth-client";
-import { getMyNotes, updateNote, deleteNote } from "../api/ServerRoute";
-import { ImageBBUpload } from "../lib/ImageBBUpload";
+import { authClient } from "../lib/auth-client.js";
+import { getMyNotes, updateNote, deleteNote } from "../api/ServerRoute.js";
+import { ImageBBUpload } from "../lib/ImageBBUpload.js";
 import { toast } from "sonner";
-import { DeleteConfirmModal } from "../ui/DeleteConfirmModal";
+import { DeleteConfirmModal } from "../ui/DeleteConfirmModal.js";
 
 export interface Note {
   id: string;

@@ -14,11 +14,11 @@ import {
   RiLayoutGridLine,
   RiDatabaseLine,
 } from "react-icons/ri";
-import { authClient } from "../lib/auth-client";
-import { ImageBBUpload } from "../lib/ImageBBUpload";
-import { notePost } from "../api/ServerRoute";
+import { authClient } from "../lib/auth-client.js";
+import { ImageBBUpload } from "../lib/ImageBBUpload.js";
+import { notePost } from "../api/ServerRoute.js";
 import { toast } from "sonner";
-import GeminiAi from "../ui/GeminiAi";
+import GeminiAi from "../ui/GeminiAi.js";
 
 // 1. Updated Interface to support the Author model properties
 interface NoteAuthor {

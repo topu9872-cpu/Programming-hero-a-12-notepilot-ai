@@ -4,18 +4,6 @@ import { Helmet } from 'react-helmet-async';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { ArrowLeft, Home, Feather, Sparkles, HelpCircle, Search, AlertCircle } from 'lucide-react';
 
-/**
- * NotePilot AI - Premium 404 Not Found Component
- * 
- * Features:
- * - Production-ready React 19 + TS implementation
- * - React Router v7 navigation integration
- * - Modern dark/light mode adaptable SaaS UI design
- * - Advanced fluid Framer Motion animations & physics-based mouse parallax
- * - Accessible keyboard navigation & semantic ARIA support
- * - Dynamic SVG abstract generative AI artwork via pure Tailwind & Lucide
- */
-
 export default function NotFound(): React.JSX.Element {
   const navigate = useNavigate();
 

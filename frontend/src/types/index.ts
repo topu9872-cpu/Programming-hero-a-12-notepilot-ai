@@ -1,5 +1,0 @@
-// Placeholder for TypeScript types
-export type ExampleType = {
-  id: string;
-  name: string;
-};

@@ -11,7 +11,7 @@ import {
   Shield,
   ArrowRight,
 } from 'lucide-react';
-import { authClient } from '../../lib/auth-client';
+import { authClient } from '../../lib/auth-client.js';
 
 interface LoginFormData {
   email: string;

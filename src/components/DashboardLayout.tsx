@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
-import DashboardSidebar from "./DashboardSidebar";
-import { authClient } from "../lib/auth-client";
+import DashboardSidebar from "./DashboardSidebar.js";
+import { authClient } from "../lib/auth-client.js";
 import { toast } from "sonner";
-import { NotePilotLoader } from "./NotePilotLoader";
+import { NotePilotLoader } from "./NotePilotLoader.js";
 
 const DashboardLayout = () => {
   const { data: session, isPending } = authClient.useSession();

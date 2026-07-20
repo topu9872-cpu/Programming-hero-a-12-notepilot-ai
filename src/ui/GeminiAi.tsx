@@ -7,7 +7,7 @@ import {
   RiText,
   RiTranslate2,
 } from "react-icons/ri";
-import { classifyNote, generateSummary } from "../api/ServerRoute";
+import { classifyNote, generateSummary } from "../api/ServerRoute.js";
 import { toast } from "sonner";
 type GeminiAiProps = {
   title: string;

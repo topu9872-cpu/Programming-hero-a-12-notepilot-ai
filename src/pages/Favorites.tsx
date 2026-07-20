@@ -5,8 +5,8 @@ import {
   RiDeleteBin6Line, RiFolderOpenLine, RiTimeLine,
   RiEyeLine, RiUserLine, RiSparkling2Line, RiCompass3Line, RiAlertLine
 } from "react-icons/ri";
-import { authClient } from "../lib/auth-client";
-import { getUsersFavorite, removeFavorite } from "../api/ServerRoute";
+import { authClient } from "../lib/auth-client.js";
+import { getUsersFavorite, removeFavorite } from "../api/ServerRoute.js";
 
 interface Note {
   _id: string; title: string;createdAt?: Date | string; description: string; category: string;
