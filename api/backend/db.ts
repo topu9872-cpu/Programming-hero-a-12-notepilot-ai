@@ -16,7 +16,6 @@ if (process.env.NODE_ENV === "production") {
   const client = new MongoClient(uri);
   clientPromise = client.connect();
 } else {
-  // ডেভেলপমেন্টে হট রিলোডের সময় বারবার কানেক্ট হওয়া আটকানো
   if (!global._mongoClientPromise) {
     const client = new MongoClient(uri);
     global._mongoClientPromise = client.connect();

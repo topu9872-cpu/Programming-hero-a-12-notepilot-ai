@@ -5,8 +5,9 @@ import express from "express";
 import cors from "cors";
 import { MongoClient, Filter, Sort, ObjectId } from "mongodb";
 import { toNodeHandler } from "better-auth/node";
-import { ai } from "./backend/ai/gemini";
-import { getAuth } from "./backend/auth";
+import { ai } from "./ai/gemini";
+import { getAuth } from './backend/auth';
+
 
 
 
@@ -28,7 +29,6 @@ app.use("/api/auth", async (req, res) => {
   return toNodeHandler(auth)(req, res);
 });
 
-// 🔌 মঙ্গোডিবি কানেকশন এবং সার্ভার স্টার্ট লজিক
 const client = new MongoClient(process.env.MONGODB_URI as string);
 
 interface Note {
