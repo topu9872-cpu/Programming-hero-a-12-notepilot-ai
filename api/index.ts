@@ -43,6 +43,8 @@ app.use(
       // allow requests with no origin (like server-to-server or curl)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
+      // Log the unknown origin for diagnostics (do not log secrets)
+      console.error('CORS: origin not allowed', { origin, allowedOrigins });
       return callback(new Error("CORS: origin not allowed"));
     },
     credentials: true,
