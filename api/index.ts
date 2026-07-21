@@ -50,7 +50,6 @@ type NotesQuery = {
   search?: string;
   sort?: string;
 };
-
 const getCollections = async () => {
   const db = await getDb();
   return {
