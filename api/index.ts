@@ -52,6 +52,28 @@ app.use(
 );
 // Do not apply express.json() globally before auth handler — some auth routes expect different body handling.
 
+// Ensure per-request CORS headers are explicit and never left as a wildcard when credentials are used.
+// This middleware sets Access-Control-Allow-Origin to the incoming Origin when it is in the allowedOrigins list.
+app.use((req, res, next) => {
+  const origin = req.headers.origin as string | undefined;
+  try {
+    if (origin && allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+    }
+    // Respond to preflight early
+    if (req.method === "OPTIONS") {
+      return res.sendStatus(204);
+    }
+  } catch (e) {
+    // In case allowedOrigins isn't available for some reason, continue — the global CORS will handle it.
+    console.error('CORS middleware error:', e);
+  }
+  return next();
+});
+
 // Proxy legacy auth routes (e.g., /sign-in, /sign-in/social) to the Better Auth handler at the root level.
 app.use("/", async (req, res, next) => {
   try {
