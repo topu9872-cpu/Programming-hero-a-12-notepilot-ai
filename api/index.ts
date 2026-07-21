@@ -11,10 +11,11 @@ import jwt from "jsonwebtoken";
 
 // Exportable runtime environment validation — call validateRequiredEnv() from your server entrypoint or serverless handler
 export function validateRequiredEnv() {
-  const requiredEnv = ["MONGODB_URI", "BETTER_AUTH_SECRET", "LOCAL_URL"];
+  // Do not require LOCAL_URL in production — only require the backend secrets and the frontend URL.
+  const requiredEnv = ["MONGODB_URI", "BETTER_AUTH_SECRET"];
   const missingEnv = requiredEnv.filter((k) => !process.env[k]);
 
-  // Accept FRONTEND_URL or legacy CLIENT_URL as the frontend origin config
+  // FRONTEND_URL (preferred) or legacy CLIENT_URL must be present to configure CORS and trusted origins.
   if (!process.env.FRONTEND_URL && !process.env.CLIENT_URL) {
     missingEnv.push("FRONTEND_URL or CLIENT_URL");
   }
@@ -30,9 +31,10 @@ const app = express();
 
 app.set("trust proxy", true);
 
-// Read allowed origins from environment variables for flexibility between dev and prod
+// Read allowed origin from environment variables — use only the production frontend origin in prod.
 const frontendOrigin = process.env.FRONTEND_URL ?? process.env.CLIENT_URL;
-const allowedOrigins = [frontendOrigin, process.env.LOCAL_URL].filter(Boolean) as string[];
+// Only include the production frontend origin here. Do not include localhost in production deployments.
+const allowedOrigins = [frontendOrigin].filter(Boolean) as string[];
 
 // Startup log showing configured CORS origins
 console.log("Configured allowed CORS origins:", allowedOrigins);

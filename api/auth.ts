@@ -31,9 +31,9 @@ export async function getAuth(): Promise<AuthClient> {
       const rawBetterAuthUrl = process.env.BETTER_AUTH_URL as string | undefined;
       const normalizedBetterAuthUrl = rawBetterAuthUrl ? rawBetterAuthUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "") : undefined;
 
+      // Only trust the production frontend origin. Do not include localhost in production.
       const trustedOrigins = [
         process.env.FRONTEND_URL ?? process.env.CLIENT_URL,
-        process.env.LOCAL_URL,
       ].filter(Boolean) as string[];
 
       const authConfig = {
