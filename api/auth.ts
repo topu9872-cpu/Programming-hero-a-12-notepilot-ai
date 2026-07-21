@@ -31,6 +31,11 @@ export async function getAuth(): Promise<AuthClient> {
       const rawBetterAuthUrl = process.env.BETTER_AUTH_URL as string | undefined;
       const normalizedBetterAuthUrl = rawBetterAuthUrl ? rawBetterAuthUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "") : undefined;
 
+      const trustedOrigins = [
+        process.env.FRONTEND_URL ?? process.env.CLIENT_URL,
+        process.env.LOCAL_URL,
+      ].filter(Boolean) as string[];
+
       const authConfig = {
         baseURL: normalizedBetterAuthUrl,
         secret,
@@ -41,10 +46,7 @@ export async function getAuth(): Promise<AuthClient> {
         emailAndPassword: {
           enabled: true,
         },
-        trustedOrigins: [
-          process.env.FRONTEND_URL ?? process.env.CLIENT_URL,
-          process.env.LOCAL_URL,
-        ].filter(Boolean) as string[],
+        trustedOrigins,
         socialProviders: {
           google: {
             clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -60,6 +62,10 @@ export async function getAuth(): Promise<AuthClient> {
           },
         },
       } satisfies BetterAuthOptions;
+
+      // Diagnostic logs (safe - do not print secrets)
+      console.log('Initializing Better Auth with baseURL:', normalizedBetterAuthUrl);
+      console.log('Better Auth trustedOrigins:', trustedOrigins);
 
       auth = betterAuth(authConfig) as unknown as AuthClient;
       return auth;
