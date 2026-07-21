@@ -46,7 +46,7 @@ const Login = () => {
       const { data: responseData, error } = await authClient.signIn.email({
         email,
         password,
-        callbackURL: "/",
+       callbackURL: "https://notepilot-frontend.vercel.app/",
       });
 
       if (error) {
