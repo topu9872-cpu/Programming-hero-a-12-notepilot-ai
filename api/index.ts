@@ -149,11 +149,9 @@ app.use("/", async (req, res, next) => {
         const newUrl = req.url.replace(/^\/auth/, '') || '/';
         // Log rewrite action (no secrets)
         console.log('Auth proxy rewrite', { method: req.method, originalUrl: originalUrlForLog, rewrittenUrl: newUrl });
-        // Update url and originalUrl so the handler sees the expected path
+        // Update url and originalUrl so the handler sees the expected path. Set originalUrl unconditionally
         req.url = newUrl;
-        if (typeof req.originalUrl === 'string') {
-          req.originalUrl = req.originalUrl.replace(/^\/auth/, '') || '/';
-        }
+        req.originalUrl = (typeof req.originalUrl === 'string') ? req.originalUrl.replace(/^\/auth/, '') || '/' : newUrl;
       } else {
         console.log('Auth proxy forwarding without rewrite', { method: req.method, path: originalPathForLog });
       }
