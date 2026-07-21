@@ -65,7 +65,6 @@ const Login = () => {
       setIsSubmitting(false);
     }
   };
-
   const handleGoogleLogin = async () => {
     try {
       await authClient.signIn.social({
