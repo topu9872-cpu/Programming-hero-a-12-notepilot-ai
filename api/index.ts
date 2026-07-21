@@ -119,7 +119,9 @@ app.use("/", async (req, res, next) => {
         const qs = new URLSearchParams();
         if (provider) qs.set("provider", provider);
         if (callbackURL) qs.set("callbackURL", callbackURL);
-        const redirectPath = req.path + (qs.toString() ? `?${qs.toString()}` : "");
+        // Redirect back to the API route so Vercel routes the subsequent GET to the serverless handler (/api/*)
+        const redirectPath = `/api${req.path}` + (qs.toString() ? `?${qs.toString()}` : "");
+        console.log('Auth proxy POST->GET redirect', { original: originalUrlForLog, redirectPath });
         return res.redirect(303, redirectPath);
       } catch (err) {
         console.error("Error converting POST to GET for social sign-in:", err);
