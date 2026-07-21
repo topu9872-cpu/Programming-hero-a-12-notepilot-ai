@@ -135,7 +135,19 @@ app.use("/", async (req, res, next) => {
 
     const auth = await getAuth();
     const handler = toNodeHandler(auth);
+
+    // If requests are prefixed with /auth (frontend posts to /api/auth/...), strip the /auth prefix
+    // so Better Auth (which registers routes like /sign-in, /sign-up) can match them.
     try {
+      if (typeof req.url === 'string' && req.path && req.path.startsWith('/auth')) {
+        const newUrl = req.url.replace(/^\/auth/, '') || '/';
+        // Update url and originalUrl so the handler sees the expected path
+        req.url = newUrl;
+        if (typeof req.originalUrl === 'string') {
+          req.originalUrl = req.originalUrl.replace(/^\/auth/, '') || '/';
+        }
+      }
+
       return handler(req, res);
     } catch (innerErr) {
       console.error("Auth proxy handler thrown error:", innerErr);
