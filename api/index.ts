@@ -58,7 +58,6 @@ const getCollections = async () => {
     FavoritedCollection: db.collection<Note>("Favorited"),
   };
 };
-
 const requireAuthSession = async (req: express.Request, res: express.Response) => {
   const session = await getAuthSession(req, res);
 
