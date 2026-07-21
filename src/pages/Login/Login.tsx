@@ -70,7 +70,7 @@ const Login = () => {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/",
+callbackURL: "https://notepilot-frontend.vercel.app/",
       });
     } catch (err) {
       console.error("Google sign-in error:", err);

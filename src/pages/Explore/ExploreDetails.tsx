@@ -41,7 +41,7 @@ export interface Note {
 export default function NoteDetails() {
   const { id } = useParams<{ id: string }>(); 
   const navigate = useNavigate(); // Fixed client-side routing redirect
-  
+  const [loading, setLoading] = useState(true);
   const [note, setNote] = useState<Note | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
   
@@ -50,29 +50,27 @@ useEffect(() => {
 
   const fetchNote = async () => {
     try {
-      const rawData = await getAllNotesDetails(id);
+      setLoading(true);
+
+      const response = await getAllNotesDetails(id);
+      console.log("Single note API response:", response);
+
+      const rawData = response?.note || response?.data || response;
+
       if (!rawData) {
-        toast.error("Document data record could not be found.");
-        return;
+        throw new Error("Note not found");
       }
 
       const normalizedNote: Note = {
         ...rawData,
-        // 1. Safeguard ID format conversions
         _id: rawData._id?.$oid || rawData._id || id,
-        
-        // 2. Safeguard against complete absence of author metadata
         author: {
           name: rawData.author?.name || 'Anonymous User',
-          avatar: rawData.author?.image || rawData.author?.avatar || '', 
+          avatar: rawData.author?.image || rawData.author?.avatar || '',
           bio: rawData.author?.bio || 'Workspace member',
           isVerified: !!rawData.author?.isVerified
         },
-        
-        // 3. Guarantee tags fallback to an empty collection to block processing failures
         tags: Array.isArray(rawData.tags) ? rawData.tags : [],
-        
-        // 4. Guarantee foundational metrics fall back to zero safely
         views: typeof rawData.views === 'number' ? rawData.views : 0,
         readTime: rawData.readTime || '1 min',
         coverGradient: rawData.coverGradient || 'from-indigo-500 to-purple-600'
@@ -80,17 +78,16 @@ useEffect(() => {
 
       setNote(normalizedNote);
     } catch (error) {
-      console.error("Critical content load exception:", error);
-      toast.error("An error occurred while building document contents.");
-      
-      // Break the indefinite loader cycle by setting a structural empty state
+      console.error("Failed to load note:", error);
+      toast.error("Failed to load note.");
       setNote(null);
+    } finally {
+      setLoading(false);
     }
   };
 
   fetchNote();
 }, [id]);
-
   const { data: session } = authClient.useSession();
   const user = session?.user;
 

@@ -18,10 +18,7 @@ import {
 } from "react-icons/ri";
 import { authClient } from "../lib/auth-client";
 import { NavLink } from "react-router-dom";
-import {
-  getDashboardNotes,
-  getUsersFavorite,
-} from "../api/ServerRoute";
+import { getDashboardNotes, getUsersFavorite } from "../api/ServerRoute";
 import { Note } from "./MyNotes";
 import { FavoriteDocument } from "./Favorites";
 
@@ -41,9 +38,12 @@ const CustomTooltip = ({ active, payload, label, unit }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-slate-900/95 border border-slate-700/50 px-3 py-2 rounded-lg shadow-xl backdrop-blur-sm">
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+          {label}
+        </p>
         <p className="text-sm font-bold text-white">
-          {payload[0].value.toLocaleString()} <span className="text-slate-400 font-normal">{unit}</span>
+          {payload[0].value.toLocaleString()}{" "}
+          <span className="text-slate-400 font-normal">{unit}</span>
         </p>
       </div>
     );
@@ -61,12 +61,13 @@ export default function DashboardHomePage() {
     getDashboardNotes(user?.id).then((data) => {
       setNotes(data.notes || []);
     });
-    getUsersFavorite(user?.id!).then((data) => {
+    getUsersFavorite().then((data) => {
       setFavorite(data || []);
     });
   }, [user?.id]);
 
-  const aiGenerated = notes.filter((data) => data.aiGenerated === true).length || 0;
+  const aiGenerated =
+    notes.filter((data) => data.aiGenerated === true).length || 0;
   const thisWeekNotes = notes.filter((note) => {
     if (!note.createdAt) return false;
     const createdAt = new Date(note.createdAt);
@@ -75,25 +76,25 @@ export default function DashboardHomePage() {
     return createdAt >= oneWeekAgo;
   }).length;
 
-const totalReadTime = notes.reduce((total, note) => {
-  const readValue = note.readTime || "0 min";
-  
-  return total + Number(readValue.replace(" min", ""));
-}, 0);
-console.log(notes)
+  const totalReadTime = notes.reduce((total, note) => {
+    const readValue = note.readTime || "0 min";
 
-const now = new Date();
+    return total + Number(readValue.replace(" min", ""));
+  }, 0);
+  console.log(notes);
 
-const favoriteNotesThisMonth = favorite.filter((item: any) => {
-  if (!item?.isFavoritedData) return false;
+  const now = new Date();
 
-  const createdAt = new Date(item.isFavoritedData);
+  const favoriteNotesThisMonth = favorite.filter((item: any) => {
+    if (!item?.isFavoritedData) return false;
 
-  return (
-    createdAt.getMonth() === now.getMonth() &&
-    createdAt.getFullYear() === now.getFullYear()
-  );
-}).length;
+    const createdAt = new Date(item.isFavoritedData);
+
+    return (
+      createdAt.getMonth() === now.getMonth() &&
+      createdAt.getFullYear() === now.getFullYear()
+    );
+  }).length;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 p-4 sm:p-6 lg:p-8 font-sans antialiased selection:bg-indigo-500/20">
@@ -108,13 +109,19 @@ const favoriteNotesThisMonth = favorite.filter((item: any) => {
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-200 dark:to-slate-400 bg-clip-text text-transparent">
               Welcome back,
-              <span className="ml-2 font-semibold text-xl sm:text-2xl opacity-90">{user?.name || "Explorer"}</span>
+              <span className="ml-2 font-semibold text-xl sm:text-2xl opacity-90">
+                {user?.name || "Explorer"}
+              </span>
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-xl">
-              Organize your notes, generate AI summaries, and track learning progress.
+              Organize your notes, generate AI summaries, and track learning
+              progress.
             </p>
           </div>
-          <NavLink to="/dashboard/create-note" className="inline-flex items-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 px-5 py-3 text-sm font-medium text-white transition-all shadow-lg shadow-indigo-500/20">
+          <NavLink
+            to="/dashboard/create-note"
+            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 px-5 py-3 text-sm font-medium text-white transition-all shadow-lg shadow-indigo-500/20"
+          >
             <RiFileList3Line className="text-lg" /> Create Note
           </NavLink>
         </div>
@@ -125,19 +132,31 @@ const favoriteNotesThisMonth = favorite.filter((item: any) => {
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 shadow-2xs space-y-3">
           <div className="flex justify-between items-start">
             <div>
-              <span className="text-[10px] font-semibold text-slate-400 uppercase">Total Notes</span>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase">
+                Total Notes
+              </span>
               <div className="flex items-baseline gap-2 mt-0.5">
                 <span className="text-2xl font-bold">{notes.length || 0}</span>
-                <span className="text-[10px] text-emerald-500 font-medium flex items-center"><RiRidingLine /> +{thisWeekNotes}</span>
+                <span className="text-[10px] text-emerald-500 font-medium flex items-center">
+                  <RiRidingLine /> +{thisWeekNotes}
+                </span>
               </div>
             </div>
-            <div className="p-2 bg-indigo-500/5 rounded-xl text-indigo-500"><RiFileList3Line className="w-4 h-4" /></div>
+            <div className="p-2 bg-indigo-500/5 rounded-xl text-indigo-500">
+              <RiFileList3Line className="w-4 h-4" />
+            </div>
           </div>
           <div className="h-16 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={KNOWLEDGE_VELOCITY_DATA}>
                 <Tooltip content={<CustomTooltip unit="words" />} />
-                <Area type="monotone" dataKey="words" stroke="#6366f1" fill="#6366f1" fillOpacity={0.1} />
+                <Area
+                  type="monotone"
+                  dataKey="words"
+                  stroke="#6366f1"
+                  fill="#6366f1"
+                  fillOpacity={0.1}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -146,22 +165,36 @@ const favoriteNotesThisMonth = favorite.filter((item: any) => {
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 shadow-2xs space-y-3">
           <div className="flex justify-between items-start">
             <div>
-              <span className="text-[10px] font-semibold text-slate-400 uppercase">AI Usage</span>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase">
+                AI Usage
+              </span>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-2xl font-bold text-purple-500">{aiGenerated}</span>
+                <span className="text-2xl font-bold text-purple-500">
+                  {aiGenerated}
+                </span>
                 <span className="text-xs text-slate-400">Summaries</span>
               </div>
             </div>
-            <div className="p-2 bg-purple-500/5 rounded-xl text-purple-500"><RiSparkling2Line className="w-4 h-4" /></div>
+            <div className="p-2 bg-purple-500/5 rounded-xl text-purple-500">
+              <RiSparkling2Line className="w-4 h-4" />
+            </div>
           </div>
           <div className="h-16 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={KNOWLEDGE_VELOCITY_DATA}>
-                <Tooltip content={({ active, payload, label }) => active && payload ? (
-                  <div className="bg-purple-900 text-white text-[10px] p-2 rounded-md">{label}: {payload[0].value} AI Queries</div>
-                ) : null} />
+                <Tooltip
+                  content={({ active, payload, label }) =>
+                    active && payload ? (
+                      <div className="bg-purple-900 text-white text-[10px] p-2 rounded-md">
+                        {label}: {payload[0].value} AI Queries
+                      </div>
+                    ) : null
+                  }
+                />
                 <Bar dataKey="aiQueries">
-                  {KNOWLEDGE_VELOCITY_DATA.map((_, i) => <Cell key={i} fill={i === 5 ? "#9333ea" : "#c084fc"} />)}
+                  {KNOWLEDGE_VELOCITY_DATA.map((_, i) => (
+                    <Cell key={i} fill={i === 5 ? "#9333ea" : "#c084fc"} />
+                  ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -171,13 +204,24 @@ const favoriteNotesThisMonth = favorite.filter((item: any) => {
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 shadow-2xs flex flex-col justify-between">
           <div className="flex justify-between items-center mb-3">
             <div>
-              <span className="text-[10px] font-semibold text-slate-400 uppercase">Favorites</span>
-              <span className="text-2xl font-bold block text-pink-500">{favorite.length || 0}</span>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase">
+                Favorites
+              </span>
+              <span className="text-2xl font-bold block text-pink-500">
+                {favorite.length || 0}
+              </span>
             </div>
-            <div className="p-2 bg-pink-500/5 rounded-xl text-pink-500"><RiHeartFill className="w-4 h-4" /></div>
+            <div className="p-2 bg-pink-500/5 rounded-xl text-pink-500">
+              <RiHeartFill className="w-4 h-4" />
+            </div>
           </div>
           <div className="space-y-3 text-xs border-t pt-3 border-slate-100 dark:border-slate-800">
-            <div className="flex justify-between"><span className="text-slate-500">This Month</span><span className="font-semibold text-pink-500">+{favoriteNotesThisMonth}</span></div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">This Month</span>
+              <span className="font-semibold text-pink-500">
+                +{favoriteNotesThisMonth}
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -185,19 +229,44 @@ const favoriteNotesThisMonth = favorite.filter((item: any) => {
       {/* 3. VELOCITY INDEX */}
       <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-2xs space-y-4">
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Knowledge Velocity Index</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Knowledge Velocity Index
+          </h3>
           <div className="flex items-baseline gap-3 mt-1">
             <p className="text-xl font-bold">{totalReadTime}</p>
-            <p className="text-[11px] text-slate-400">Total words processed this week</p>
+            <p className="text-[11px] text-slate-400">
+              Total words processed this week
+            </p>
           </div>
         </div>
         <div className="h-48 w-full pt-2">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={KNOWLEDGE_VELOCITY_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <XAxis dataKey="day" stroke="#94a3b8" fontSize={10} axisLine={false} tickLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={10} axisLine={false} tickLine={false} />
+            <AreaChart
+              data={KNOWLEDGE_VELOCITY_DATA}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            >
+              <XAxis
+                dataKey="day"
+                stroke="#94a3b8"
+                fontSize={10}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                stroke="#94a3b8"
+                fontSize={10}
+                axisLine={false}
+                tickLine={false}
+              />
               <Tooltip content={<CustomTooltip unit="words" />} />
-              <Area type="monotone" dataKey="words" stroke="#6366f1" strokeWidth={2} fill="#6366f1" fillOpacity={0.1} />
+              <Area
+                type="monotone"
+                dataKey="words"
+                stroke="#6366f1"
+                strokeWidth={2}
+                fill="#6366f1"
+                fillOpacity={0.1}
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>

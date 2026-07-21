@@ -1,6 +1,6 @@
 import { Note } from "../pages/Explore/ExploreDetails.js";
 
-const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_API_URL || "https://notepilot-backend.vercel.app/api";
 
 export interface NotesRequestOptions {
   page?: number;
@@ -15,7 +15,7 @@ export const getAllNotes = async ({
   limit = 8,
   search = "",
   sort = "newest",
-  category, 
+  category,
 }: NotesRequestOptions = {}) => {
   const url = new URL(`${API}/all-notes`);
 
@@ -30,7 +30,6 @@ export const getAllNotes = async ({
     url.searchParams.append("sort", sort);
   }
 
-  
   if (category && category.trim()) {
     url.searchParams.append("category", category.trim());
   }
@@ -59,11 +58,11 @@ export interface MyNotesResponse {
 }
 
 export const getDashboardNotes = async (userId?: string) => {
-  const url = userId
-    ? `${API}/my-notes/${userId}`
-    : `${API}/my-notes`;
+  const url = userId ? `${API}/my-notes/${userId}` : `${API}/my-notes`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    credentials: "include",
+  });
   const result = await res.json();
 
   if (!res.ok) {
@@ -82,10 +81,12 @@ export const getMyNotes = async (
     sort = "newest",
   }: MyNotesRequestOptions = {},
 ): Promise<MyNotesResponse> => {
-  const url = new URL( userId
-    ? `${API}/my-notes/${encodeURIComponent(userId)}`
-    : `${API}/my-notes`);
-  
+  const url = new URL(
+    userId
+      ? `${API}/my-notes/${encodeURIComponent(userId)}`
+      : `${API}/my-notes`,
+  );
+
   url.searchParams.append("page", String(page));
   url.searchParams.append("limit", String(limit));
 
@@ -97,7 +98,9 @@ export const getMyNotes = async (
     url.searchParams.append("sort", sort);
   }
 
-  const res = await fetch(url.toString());
+  const res = await fetch(url.toString(), {
+    credentials: "include",
+  });
 
   if (!res.ok) {
     throw new Error(`Failed to fetch user notes: ${res.status}`);
@@ -107,23 +110,24 @@ export const getMyNotes = async (
 };
 
 export const getAllNotesDetails = async (id: string) => {
-  // Adding cache: 'no-store' instructs the browser to bypass its cache
-  // and fetch fresh data from the server every single time.
-  const res = await fetch(`${API}/all-notes/${id}`, {
+  const url = `${API}/all-notes/${id}`;
+
+  console.log("Fetching detail:", url);
+
+  const res = await fetch(url, {
     cache: "no-store",
-    headers: {
-      Pragma: "no-cache",
-      "Cache-Control": "no-cache",
-    },
   });
 
+  const data = await res.json();
+
+  console.log("Detail response:", data);
+
   if (!res.ok) {
-    throw new Error("Failed to fetch notes");
+    throw new Error(data?.message || "Failed to fetch note details");
   }
 
-  return res.json();
+  return data;
 };
-
 export const Notesfavorited = async (data: {
   isFavoritedData: Date;
   isFavorited: boolean;
@@ -132,6 +136,7 @@ export const Notesfavorited = async (data: {
 }) => {
   const res = await fetch(`${API}/favorited`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -150,6 +155,7 @@ export const Notesfavorited = async (data: {
 export const removeFavorite = async (noteId: string, userId: string) => {
   const res = await fetch(`${API}/favorited`, {
     method: "DELETE",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -165,6 +171,7 @@ export const removeFavorite = async (noteId: string, userId: string) => {
 export const deleteNote = async (id: string) => {
   const res = await fetch(`${API}/delete-student-notes/${id}`, {
     method: "DELETE",
+    credentials: "include",
   });
 
   return res.json();
@@ -173,6 +180,7 @@ export const deleteNote = async (id: string) => {
 export const notePost = async (body: Note) => {
   const res = await fetch(`${API}/all-notes`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -190,6 +198,7 @@ export const notePost = async (body: Note) => {
 export const updateNote = async (noteId: string, body: Partial<Note>) => {
   const res = await fetch(`${API}/all-notes/${encodeURIComponent(noteId)}`, {
     method: "PATCH",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -205,8 +214,10 @@ export const updateNote = async (noteId: string, body: Partial<Note>) => {
   return result;
 };
 
-export const getUsersFavorite = async (id: string) => {
-  const res = await fetch(`${API}/favorited/${id}`);
+export const getUsersFavorite = async () => {
+  const res = await fetch(`${API}/favorited`, {
+    credentials: "include",
+  });
 
   if (!res.ok) {
     throw new Error("Something went wrong");
@@ -215,7 +226,7 @@ export const getUsersFavorite = async (id: string) => {
 };
 
 export const generateSummary = async (title: string, content: string) => {
-  const res = await fetch(`${API}/api/ai/summary`, {
+  const res = await fetch(`${API}/ai/summary`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -234,7 +245,7 @@ export const generateSummary = async (title: string, content: string) => {
 };
 
 export const classifyNote = async (title: string, content: string) => {
-  const res = await fetch(`${API}/api/ai/classify`, {
+  const res = await fetch(`${API}/ai/classify`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
