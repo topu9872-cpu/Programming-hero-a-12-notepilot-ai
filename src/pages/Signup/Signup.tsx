@@ -78,7 +78,7 @@ const Signup = () => {
     try {
       await authClient.signIn.social({
         provider: "google",
-         callbackURL: import.meta.env.VITE_APP_URL,
+        callbackURL: "/",
       });
     } catch (err) {
       console.error("Google sign-in error:", err);
