@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth";
 import type { BetterAuthOptions } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { jwt } from "better-auth/plugins";
-import { getDb } from "./db";
+import { getDb } from "./db.js";
 
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -27,8 +27,12 @@ export async function getAuth(): Promise<AuthClient> {
 
       const db = await getDb();
 
+      // Normalize BETTER_AUTH_URL to avoid accidental /api suffixes from serverless rewrites
+      const rawBetterAuthUrl = process.env.BETTER_AUTH_URL as string | undefined;
+      const normalizedBetterAuthUrl = rawBetterAuthUrl ? rawBetterAuthUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "") : undefined;
+
       const authConfig = {
-        baseURL: process.env.BETTER_AUTH_URL,
+        baseURL: normalizedBetterAuthUrl,
         secret,
         database: mongodbAdapter(db, {
           // client,
@@ -38,8 +42,9 @@ export async function getAuth(): Promise<AuthClient> {
           enabled: true,
         },
         trustedOrigins: [
-          "https://programming-hero-a-12-notepilot-ai.vercel.app",
-        ],
+          process.env.FRONTEND_URL ?? process.env.CLIENT_URL,
+          process.env.LOCAL_URL,
+        ].filter(Boolean) as string[],
         socialProviders: {
           google: {
             clientId: process.env.GOOGLE_CLIENT_ID as string,

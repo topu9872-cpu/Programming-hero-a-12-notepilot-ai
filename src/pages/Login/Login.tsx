@@ -72,8 +72,9 @@ const Login = () => {
     const handleGoogleLogin = async () => {
       try {
         await authClient.signIn.social({
-          provider: "google",
-           callbackURL: import.meta.env.VITE_APP_URL,
+           provider: "google",
+           // Use FRONTEND URL when available, otherwise current origin
+           callbackURL: (import.meta.env.VITE_FRONTEND_URL as string | undefined) ?? window.location.origin,
         });
       } catch (err) {
         console.error("Google sign-in error:", err);

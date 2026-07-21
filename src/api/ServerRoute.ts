@@ -1,6 +1,16 @@
 import { Note } from "../pages/Explore/ExploreDetails.js";
 
-const API = import.meta.env.VITE_API_URL;
+const API = (() => {
+  // Prefer VITE_API_URL when provided (production/preview). If not set in production,
+  // fall back to the known deployed backend URL so CI/deployments that omit the
+  // environment variable still produce a working build. Local development still
+  // falls back to http://localhost:5000.
+  const apiUrl = import.meta.env.VITE_API_URL as string | undefined;
+  if (apiUrl && apiUrl !== "undefined") return apiUrl;
+  if (import.meta.env.MODE === "development") return "http://localhost:5000";
+  // Fallback to the deployed backend /api entrypoint to allow non-interactive builds.
+  return "https://notepilot-backend.vercel.app/api";
+})();
 
 export interface NotesRequestOptions {
   page?: number;
@@ -215,7 +225,7 @@ export const getUsersFavorite = async (id: string) => {
 };
 
 export const generateSummary = async (title: string, content: string) => {
-  const res = await fetch(`${API}/api/ai/summary`, {
+  const res = await fetch(`${API}/ai/summary`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -234,7 +244,7 @@ export const generateSummary = async (title: string, content: string) => {
 };
 
 export const classifyNote = async (title: string, content: string) => {
-  const res = await fetch(`${API}/api/ai/classify`, {
+  const res = await fetch(`${API}/ai/classify`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
